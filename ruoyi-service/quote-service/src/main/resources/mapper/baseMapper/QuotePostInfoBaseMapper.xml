@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.quote.mapper.QuotePostInfoMapper">
+    
+    <resultMap type="QuotePostInfo" id="QuotePostInfoResult">
+        <result property="id"    column="id"    />
+        <result property="postName"    column="post_name"    />
+        <result property="industryId"    column="industry_id"    />
+        <result property="creator"    column="creator"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectQuotePostInfoVo">
+        select id, post_name, industry_id, creator, create_time, update_time, del_flag from quote_post_info
+    </sql>
+
+    <select id="selectQuotePostInfoList" parameterType="QuotePostInfo" resultMap="QuotePostInfoResult">
+        <include refid="selectQuotePostInfoVo"/>
+        <where>  
+            <if test="postName != null  and postName != ''"> and post_name like concat('%', #{postName}, '%')</if>
+            <if test="industryId != null "> and industry_id = #{industryId}</if>
+            <if test="creator != null  and creator != ''"> and creator = #{creator}</if>
+        </where>
+    </select>
+    
+    <select id="selectQuotePostInfoById" parameterType="Long" resultMap="QuotePostInfoResult">
+        <include refid="selectQuotePostInfoVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertQuotePostInfo" parameterType="QuotePostInfo"  useGeneratedKeys="true" keyProperty="id">
+        insert into quote_post_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="postName != null">post_name,</if>
+            <if test="industryId != null">industry_id,</if>
+            <if test="creator != null">creator,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="postName != null">#{postName},</if>
+            <if test="industryId != null">#{industryId},</if>
+            <if test="creator != null">#{creator},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateQuotePostInfo" parameterType="QuotePostInfo">
+        update quote_post_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="postName != null">post_name = #{postName},</if>
+            <if test="industryId != null">industry_id = #{industryId},</if>
+            <if test="creator != null">creator = #{creator},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteQuotePostInfoById" parameterType="Long">
+        delete from quote_post_info where id = #{id}
+    </delete>
+
+    <delete id="deleteQuotePostInfoByIds" parameterType="String">
+        delete from quote_post_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

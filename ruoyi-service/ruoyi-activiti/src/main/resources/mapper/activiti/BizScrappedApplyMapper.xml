@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.BizScrappedApplyMapper">
+
+    <resultMap type="BizScrappedApply" id="BizScrappedApplyResult">
+        <result property="id"    column="id"    />
+        <result property="title"    column="title"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="applyCode"    column="apply_code"    />
+        <result property="cc"    column="cc"    />
+        <result property="remark"    column="remark"    />
+        <result property="assertId"    column="assert_id"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectBizScrappedApplyVo">
+        select id, title, dept_id, apply_code, cc, remark, assert_id, del_flag, create_by, create_time, update_by, update_time,scrapped_price,real_price,deal_method,rcv_method from biz_scrapped_apply
+    </sql>
+
+    <select id="selectBizScrappedApplyList" parameterType="BizScrappedApply" resultMap="BizScrappedApplyResult">
+        <include refid="selectBizScrappedApplyVo"/>
+        <where>
+        </where>
+    </select>
+
+    <select id="selectBizScrappedApplyById" parameterType="Long" resultMap="BizScrappedApplyResult">
+        <include refid="selectBizScrappedApplyVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertBizScrappedApply" parameterType="BizScrappedApply" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_scrapped_apply
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="title != null  and title != ''">title,</if>
+            <if test="deptId != null ">dept_id,</if>
+            <if test="applyCode != null  and applyCode != ''">apply_code,</if>
+            <if test="cc != null  and cc != ''">cc,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="assertId != null ">assert_id,</if>
+            <if test="delFlag != null  and delFlag != ''">del_flag,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="dealMethod != null  and dealMethod != ''">deal_method,</if>
+            <if test="rcvMethod != null  and rcvMethod != ''">rcv_method,</if>
+            <if test="scrappedPrice != null ">scrapped_price,</if>
+            <if test="realPrice != null ">real_price,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="title != null  and title != ''">#{title},</if>
+            <if test="deptId != null ">#{deptId},</if>
+            <if test="applyCode != null  and applyCode != ''">#{applyCode},</if>
+            <if test="cc != null  and cc != ''">#{cc},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="assertId != null ">#{assertId},</if>
+            <if test="delFlag != null  and delFlag != ''">#{delFlag},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="dealMethod != null  and dealMethod != ''">#{dealMethod},</if>
+            <if test="rcvMethod != null  and rcvMethod != ''">#{rcvMethod},</if>
+            <if test="scrappedPrice != null ">#{scrappedPrice},</if>
+            <if test="realPrice != null ">#{realPrice},</if>
+        </trim>
+    </insert>
+
+    <update id="updateBizScrappedApply" parameterType="BizScrappedApply">
+        update biz_scrapped_apply
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="title != null  and title != ''">title = #{title},</if>
+            <if test="deptId != null ">dept_id = #{deptId},</if>
+            <if test="applyCode != null  and applyCode != ''">apply_code = #{applyCode},</if>
+            <if test="cc != null  and cc != ''">cc = #{cc},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="assertId != null ">assert_id = #{assertId},</if>
+            <if test="delFlag != null  and delFlag != ''">del_flag = #{delFlag},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizScrappedApplyById" parameterType="Long">
+        delete from biz_scrapped_apply where id = #{id}
+    </delete>
+
+    <delete id="deleteBizScrappedApplyByIds" parameterType="String">
+        delete from biz_scrapped_apply where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

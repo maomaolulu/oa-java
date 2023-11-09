@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.quote.mapper.QuoteChargeCategoryMapper">
+
+    <resultMap type="QuoteChargeCategoryVO" id="QuoteChargeCategoryTreeResult">
+        <result property="categoryId" column="category_id"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="ancestors" column="ancestors"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <select id="selectQuoteChargeCategoryByCategoryName" parameterType="String" resultMap="QuoteChargeCategoryResult">
+        <include refid="selectQuoteChargeCategoryVo"/>
+        where category_name = #{categoryName}
+    </select>
+
+    <select id="selectQuoteChargeCategoryTreeList" parameterType="QuoteChargeCategory"
+            resultMap="QuoteChargeCategoryTreeResult">
+        <include refid="selectQuoteChargeCategoryVo"/>
+        <where>
+            <if test="categoryName != null  and categoryName != ''">and category_name like concat('%', #{categoryName},
+                '%')
+            </if>
+            <if test="parentId != null ">and parent_id = #{parentId}</if>
+            <if test="ancestors != null  and ancestors != ''">and ancestors = #{ancestors}</if>
+        </where>
+    </select>
+
+    <select id="selectChargeCategoryIdListByCategoryName" parameterType="java.lang.String" resultType="java.lang.Long">
+        select category_id
+        from quote_charge_category
+        where category_name = #{categoryName}
+    </select>
+</mapper>

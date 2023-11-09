@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.quote.mapper.QuoteHarmFactorMapper">
+    
+    <resultMap type="QuoteHarmFactor" id="QuoteHarmFactorResult">
+        <result property="id"    column="id"    />
+        <result property="postId"    column="post_id"    />
+        <result property="baseId"    column="base_id"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectQuoteHarmFactorVo">
+        select id, post_id, base_id, create_time from quote_harm_factor
+    </sql>
+
+    <select id="selectQuoteHarmFactorList" parameterType="QuoteHarmFactor" resultMap="QuoteHarmFactorResult">
+        <include refid="selectQuoteHarmFactorVo"/>
+        <where>  
+            <if test="postId != null "> and post_id = #{postId}</if>
+            <if test="baseId != null "> and base_id = #{baseId}</if>
+        </where>
+    </select>
+    
+    <select id="selectQuoteHarmFactorById" parameterType="Long" resultMap="QuoteHarmFactorResult">
+        <include refid="selectQuoteHarmFactorVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertQuoteHarmFactor" parameterType="QuoteHarmFactor"  useGeneratedKeys="true" keyProperty="id">
+        insert into quote_harm_factor
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="postId != null">post_id,</if>
+            <if test="baseId != null">base_id,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="postId != null">#{postId},</if>
+            <if test="baseId != null">#{baseId},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateQuoteHarmFactor" parameterType="QuoteHarmFactor">
+        update quote_harm_factor
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="postId != null">post_id = #{postId},</if>
+            <if test="baseId != null">base_id = #{baseId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteQuoteHarmFactorById" parameterType="Long">
+        delete from quote_harm_factor where id = #{id}
+    </delete>
+
+    <delete id="deleteQuoteHarmFactorByIds" parameterType="String">
+        delete from quote_harm_factor where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

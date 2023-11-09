@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.training.mapper.TraCourseInfoMapper">
+
+    <resultMap type="TraCourseInfo" id="TraCourseInfoResult">
+        <result property="id" column="id"/>
+        <result property="courseName" column="course_name"/>
+        <result property="classHour" column="class_hour"/>
+        <result property="trainId" column="train_id"/>
+        <result property="deptId" column="dept_id"/>
+        <result property="companyId" column="company_id"/>
+        <result property="issueFlag" column="issue_flag"/>
+        <result property="md5" column="md5"/>
+        <result property="recommend" column="recommend"/>
+        <result property="createTime" column="create_time"/>
+        <result property="lastModifier" column="last_modifier"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="checked" column="checked"/>
+        <result property="categoryName" column="categoryName"/>
+        <result property="coverUrl" column="cover_url"/>
+        <result property="types" column="types"/>
+        <result property="cssClass" column="css_class"/>
+    </resultMap>
+
+    <sql id="selectTraCourseInfoVo">
+        select id,
+               course_name,
+               class_hour,
+               train_id,
+               dept_id,
+               company_id,
+               issue_flag,
+               md5,
+               recommend,
+               create_time,
+               last_modifier,
+               update_time
+        from tra_course_info
+    </sql>
+
+    <select id="selectTraCourseInfoList" parameterType="TraCourseInfo" resultMap="TraCourseInfoResult">
+        <include refid="selectTraCourseInfoVo"/>
+        <where>
+            <if test="courseName != null  and courseName != ''">and course_name like concat('%', #{courseName}, '%')
+            </if>
+            <if test="classHour != null ">and class_hour = #{classHour}</if>
+            <if test="trainId != null ">and train_id = #{trainId}</if>
+            <if test="deptId != null  and deptId != ''">and dept_id = #{deptId}</if>
+            <if test="companyId != null  and companyId != ''">and company_id = #{companyId}</if>
+            <if test="issueFlag != null ">and issue_flag = #{issueFlag}</if>
+            <if test="md5 != null  and md5 != ''">and md5 = #{md5}</if>
+            <if test="recommend != null ">and recommend = #{recommend}</if>
+            <if test="lastModifier != null  and lastModifier != ''">and last_modifier like concat('%', #{lastModifier},
+                '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectTraCourseInfoById" parameterType="Long" resultMap="TraCourseInfoResult">
+        <include refid="selectTraCourseInfoVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertTraCourseInfo" parameterType="TraCourseInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into tra_course_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="courseName != null">course_name,</if>
+            <if test="classHour != null">class_hour,</if>
+            <if test="trainId != null">train_id,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="companyId != null">company_id,</if>
+            <if test="issueFlag != null">issue_flag,</if>
+            <if test="md5 != null">md5,</if>
+            <if test="recommend != null">recommend,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="lastModifier != null">last_modifier,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="courseName != null">#{courseName},</if>
+            <if test="classHour != null">#{classHour},</if>
+            <if test="trainId != null">#{trainId},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="companyId != null">#{companyId},</if>
+            <if test="issueFlag != null">#{issueFlag},</if>
+            <if test="md5 != null">#{md5},</if>
+            <if test="recommend != null">#{recommend},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="lastModifier != null">#{lastModifier},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTraCourseInfo" parameterType="TraCourseInfo">
+        update tra_course_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="courseName != null">course_name = #{courseName},</if>
+            <if test="classHour != null">class_hour = #{classHour},</if>
+            <if test="trainId != null">train_id = #{trainId},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="companyId != null">company_id = #{companyId},</if>
+            <if test="issueFlag != null">issue_flag = #{issueFlag},</if>
+            <if test="md5 != null">md5 = #{md5},</if>
+            <if test="recommend != null">recommend = #{recommend},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="lastModifier != null">last_modifier = #{lastModifier},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTraCourseInfoById" parameterType="Long">
+        delete
+        from tra_course_info
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteTraCourseInfoByIds" parameterType="String">
+        delete from tra_course_info where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <select id="selectNewCourseInfoList" resultMap="TraCourseInfoResult">
+        SELECT
+        t1.id,
+        t1.course_name,
+        t1.class_hour,
+        t1.train_id,
+        t1.dept_id,
+        t1.company_id,
+        t1.issue_flag,
+        t1.md5,
+        t1.create_time,
+        t2.category_name AS categoryName,
+        t2.cover_url,t2.types,t2.css_class,
+        ISNULL( t3.course_id ) AS checked,
+        IF(find_in_set( #{traCourseInfo.deptId}, t1.dept_id ), 1, 0 ) AS recommend
+        FROM tra_course_info t1
+        LEFT JOIN tra_train_category t2 ON t1.train_id = t2.id
+        LEFT JOIN ( SELECT course_id, user_id FROM tra_course_user WHERE user_id = #{userId} ) t3 ON t1.id =t3.course_id
+        WHERE t1.issue_flag != '0'
+        <if test="traCourseInfo.trainId != null ">and t1.train_id = #{traCourseInfo.trainId}</if>
+        <if test="traCourseInfo.companyId != null ">and t1.company_id = #{traCourseInfo.companyId}</if>
+        <if test="traCourseInfo.deptId != null ">and find_in_set(#{traCourseInfo.deptId},t1.dept_id) > 0</if>
+        ORDER BY t1.create_time DESC
+    </select>
+
+
+</mapper>

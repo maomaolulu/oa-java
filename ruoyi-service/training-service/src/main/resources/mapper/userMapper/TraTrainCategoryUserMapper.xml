@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.training.mapper.TraTrainCategoryMapper">
+
+    <resultMap id="TraTrainCategoryResult1" type="TraTrainCategoryVO">
+        <result property="companyId" column="company_id"/>
+        <result property="companyName" column="dept_name"/>
+        <collection property="list" ofType="TraTrainCategory">
+            <result property="id" column="id"/>
+            <result property="categoryName" column="category_name"/>
+            <result property="creator" column="creator"/>
+            <result property="createTime" column="create_time"/>
+            <result property="lastModifer" column="last_modifer"/>
+            <result property="updateTime" column="update_time"/>
+            <result property="coverUrl" column="cover_url"/>
+            <result property="cssClass" column="css_class"/>
+            <result property="companyId" column="company_id"/>
+            <result property="types" column="types"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectTraTrainCategoryUserList" parameterType="java.lang.Long" resultMap="TraTrainCategoryResult">
+        select distinct t3.*
+        from tra_customize_course_exam t1
+                 left join tra_course_info t2 on t1.course_id = t2.id
+                 left join tra_train_category t3 on t2.train_id = t3.id
+        where t1.exam_id = #{examId}
+    </select>
+
+    <select id="selectTrainCategoryInfoByCompanyIds" resultMap="TraTrainCategoryResult1" parameterType="java.lang.Long">
+        select t2.dept_name, t1.*
+        from tra_train_category t1
+        left join sys_dept t2 on t1.company_id = t2.dept_id
+        where t1.company_id in
+        <foreach collection="companyIds" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+</mapper>

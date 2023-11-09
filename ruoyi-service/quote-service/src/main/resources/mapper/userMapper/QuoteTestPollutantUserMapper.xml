@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.quote.mapper.QuoteTestPollutantMapper">
+
+    <select id="selectPollutantIdListById" parameterType="java.lang.Long" resultType="java.lang.Long">
+        select pollutant_id
+        from quote_test_pollutant
+        where id = #{id}
+    </select>
+
+    <select id="selectTestPollutantById" parameterType="Long" resultMap="QuoteTestPollutantResult">
+        <include refid="selectQuoteTestPollutantVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="countByPollutantId" parameterType="Long" resultType="java.lang.Integer">
+        select count(*) from quote_test_pollutant where pollutant_id in
+        <foreach collection="array" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <delete id="deleteTestPollutantByPollutantIds" parameterType="String">
+        delete from quote_test_pollutant where pollutant_id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectQuoteTestPollutant" parameterType="QuoteTestPollutant" resultMap="QuoteTestPollutantResult">
+        <include refid="selectQuoteTestPollutantVo"/>
+        <where>
+            <if test="id != null ">and id = #{id}</if>
+            <if test="pollutantId != null ">and pollutant_id = #{pollutantId}</if>
+        </where>
+    </select>
+
+    <delete id="deleteRelationPollutant" parameterType="QuoteTestPollutant">
+        delete from quote_test_pollutant
+        <where>
+            <if test="id != null ">and id = #{id}</if>
+            <if test="pollutantId != null ">and pollutant_id = #{pollutantId}</if>
+        </where>
+    </delete>
+</mapper>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.quote.mapper.QuoteExpenseDetailsMapper">
+    
+    <resultMap type="QuoteExpenseDetails" id="QuoteExpenseDetailsResult">
+        <result property="id"    column="id"    />
+        <result property="companyName"    column="company_name"    />
+        <result property="subName"    column="sub_name"    />
+        <result property="subAbb"    column="sub_abb"    />
+        <result property="subId"    column="sub_id"    />
+        <result property="sheetId"    column="sheet_id"    />
+        <result property="testExpense"    column="test_expense"    />
+        <result property="reportFabrication"    column="report_fabrication"    />
+        <result property="expertEvaluation"    column="expert_evaluation"    />
+        <result property="taxes"    column="taxes"    />
+        <result property="total"    column="total"    />
+        <result property="tempFlag"    column="temp_flag"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="urgentExpense"    column="urgent_expense"    />
+    </resultMap>
+
+    <sql id="selectQuoteExpenseDetailsVo">
+        select id, company_name, sub_name, sub_abb, sub_id, sheet_id, test_expense, report_fabrication, expert_evaluation, taxes, total, temp_flag, create_time,urgent_expense from quote_expense_details
+    </sql>
+
+    <select id="selectQuoteExpenseDetailsList" parameterType="QuoteExpenseDetails" resultMap="QuoteExpenseDetailsResult">
+        <include refid="selectQuoteExpenseDetailsVo"/>
+        <where>  
+            <if test="companyName != null  and companyName != ''"> and company_name like concat('%', #{companyName}, '%')</if>
+            <if test="subName != null  and subName != ''"> and sub_name like concat('%', #{subName}, '%')</if>
+            <if test="subAbb != null  and subAbb != ''"> and sub_abb = #{subAbb}</if>
+            <if test="subId != null "> and sub_id = #{subId}</if>
+            <if test="sheetId != null  and sheetId != ''"> and sheet_id = #{sheetId}</if>
+            <if test="testExpense != null "> and test_expense = #{testExpense}</if>
+            <if test="reportFabrication != null "> and report_fabrication = #{reportFabrication}</if>
+            <if test="expertEvaluation != null "> and expert_evaluation = #{expertEvaluation}</if>
+            <if test="taxes != null "> and taxes = #{taxes}</if>
+            <if test="total != null "> and total = #{total}</if>
+            <if test="tempFlag != null "> and temp_flag = #{tempFlag}</if>
+            <if test="urgentExpense != null "> and urgent_expense = #{urgentExpense}</if>
+        </where>
+    </select>
+    
+    <select id="selectQuoteExpenseDetailsById" parameterType="Long" resultMap="QuoteExpenseDetailsResult">
+        <include refid="selectQuoteExpenseDetailsVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertQuoteExpenseDetails" parameterType="QuoteExpenseDetails"  useGeneratedKeys="true" keyProperty="id">
+        insert into quote_expense_details
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="companyName != null">company_name,</if>
+            <if test="subName != null">sub_name,</if>
+            <if test="subAbb != null">sub_abb,</if>
+            <if test="subId != null">sub_id,</if>
+            <if test="sheetId != null">sheet_id,</if>
+            <if test="testExpense != null">test_expense,</if>
+            <if test="reportFabrication != null">report_fabrication,</if>
+            <if test="expertEvaluation != null">expert_evaluation,</if>
+            <if test="taxes != null">taxes,</if>
+            <if test="total != null">total,</if>
+            <if test="tempFlag != null">temp_flag,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="urgentExpense != null">urgent_expense,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="companyName != null">#{companyName},</if>
+            <if test="subName != null">#{subName},</if>
+            <if test="subAbb != null">#{subAbb},</if>
+            <if test="subId != null">#{subId},</if>
+            <if test="sheetId != null">#{sheetId},</if>
+            <if test="testExpense != null">#{testExpense},</if>
+            <if test="reportFabrication != null">#{reportFabrication},</if>
+            <if test="expertEvaluation != null">#{expertEvaluation},</if>
+            <if test="taxes != null">#{taxes},</if>
+            <if test="total != null">#{total},</if>
+            <if test="tempFlag != null">#{tempFlag},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="urgentExpense != null">#{urgentExpense},</if>
+         </trim>
+    </insert>
+
+    <update id="updateQuoteExpenseDetails" parameterType="QuoteExpenseDetails">
+        update quote_expense_details
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="companyName != null">company_name = #{companyName},</if>
+            <if test="subName != null">sub_name = #{subName},</if>
+            <if test="subAbb != null">sub_abb = #{subAbb},</if>
+            <if test="subId != null">sub_id = #{subId},</if>
+            <if test="sheetId != null">sheet_id = #{sheetId},</if>
+            <if test="testExpense != null">test_expense = #{testExpense},</if>
+            <if test="reportFabrication != null">report_fabrication = #{reportFabrication},</if>
+            <if test="expertEvaluation != null">expert_evaluation = #{expertEvaluation},</if>
+            <if test="taxes != null">taxes = #{taxes},</if>
+            <if test="total != null">total = #{total},</if>
+            <if test="tempFlag != null">temp_flag = #{tempFlag},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="urgentExpense != null">urgent_expense = #{urgentExpense},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteQuoteExpenseDetailsById" parameterType="Long">
+        delete from quote_expense_details where id = #{id}
+    </delete>
+
+    <delete id="deleteQuoteExpenseDetailsByIds" parameterType="String">
+        delete from quote_expense_details where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

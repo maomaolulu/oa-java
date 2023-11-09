@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.quote.mapper.QuoteSheetInfoMapper">
+    
+    <resultMap type="QuoteSheetInfo" id="QuoteSheetInfoResult">
+        <result property="id"    column="id"    />
+        <result property="customerId"    column="customer_id"    />
+        <result property="recordCode"    column="record_code"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="customerName"    column="customer_name"    />
+        <result property="companyName"    column="company_name"    />
+        <result property="masterCategory"    column="master_category"    />
+        <result property="masterAbbreviation"    column="master_abbreviation"    />
+        <result property="totalPrice"    column="total_price"    />
+        <result property="expertEvaluation"    column="expert_evaluation"    />
+        <result property="discount"    column="discount"    />
+        <result property="discountPrice"    column="discount_price"    />
+        <result property="excludeTaxesPrice"    column="exclude_taxes_price"    />
+        <result property="taxes"    column="taxes"    />
+        <result property="salesman"    column="salesman"    />
+        <result property="telephone"    column="telephone"    />
+        <result property="email"    column="email"    />
+        <result property="serviceName"    column="service_name"    />
+        <result property="serviceTelephone"    column="service_telephone"    />
+        <result property="serviceEmail"    column="service_email"    />
+        <result property="quoteProject"    column="quote_project"    />
+        <result property="salesInfo"    column="sales_info"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="remarks"    column="remarks"    />
+        <result property="masterCategoryId"    column="master_category_id"    />
+        <result property="urgentExpense"    column="urgent_expense"    />
+    </resultMap>
+
+    <sql id="selectQuoteSheetInfoVo">
+        select id, customer_id, record_code, project_name, customer_name, company_name, master_category, master_abbreviation, total_price, expert_evaluation, discount, discount_price, exclude_taxes_price, taxes, salesman, telephone, email, service_name, service_telephone, service_email, quote_project, sales_info, create_time, remarks, master_category_id,urgent_expense from quote_sheet_info
+    </sql>
+
+    <select id="selectQuoteSheetInfoList" parameterType="QuoteSheetInfo" resultMap="QuoteSheetInfoResult">
+        <include refid="selectQuoteSheetInfoVo"/>
+        <where>  
+            <if test="customerId != null "> and customer_id = #{customerId}</if>
+            <if test="recordCode != null  and recordCode != ''"> and record_code = #{recordCode}</if>
+            <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
+            <if test="customerName != null  and customerName != ''"> and customer_name like concat('%', #{customerName}, '%')</if>
+            <if test="companyName != null  and companyName != ''"> and company_name like concat('%', #{companyName}, '%')</if>
+            <if test="masterCategory != null  and masterCategory != ''"> and master_category = #{masterCategory}</if>
+            <if test="masterAbbreviation != null  and masterAbbreviation != ''"> and master_abbreviation = #{masterAbbreviation}</if>
+            <if test="totalPrice != null "> and total_price = #{totalPrice}</if>
+            <if test="expertEvaluation != null "> and expert_evaluation = #{expertEvaluation}</if>
+            <if test="discount != null "> and discount = #{discount}</if>
+            <if test="discountPrice != null "> and discount_price = #{discountPrice}</if>
+            <if test="excludeTaxesPrice != null "> and exclude_taxes_price = #{excludeTaxesPrice}</if>
+            <if test="taxes != null "> and taxes = #{taxes}</if>
+            <if test="salesman != null  and salesman != ''"> and salesman = #{salesman}</if>
+            <if test="telephone != null  and telephone != ''"> and telephone = #{telephone}</if>
+            <if test="email != null  and email != ''"> and email = #{email}</if>
+            <if test="serviceName != null  and serviceName != ''"> and service_name like concat('%', #{serviceName}, '%')</if>
+            <if test="serviceTelephone != null  and serviceTelephone != ''"> and service_telephone = #{serviceTelephone}</if>
+            <if test="serviceEmail != null  and serviceEmail != ''"> and service_email = #{serviceEmail}</if>
+            <if test="quoteProject != null  and quoteProject != ''"> and quote_project = #{quoteProject}</if>
+            <if test="salesInfo != null  and salesInfo != ''"> and sales_info = #{salesInfo}</if>
+            <if test="remarks != null  and remarks != ''"> and remarks = #{remarks}</if>
+            <if test="masterCategoryId != null "> and master_category_id = #{masterCategoryId}</if>
+            <if test="urgentExpense != null "> and urgent_expense = #{urgentExpense}</if>
+        </where>
+    </select>
+    
+    <select id="selectQuoteSheetInfoById" parameterType="String" resultMap="QuoteSheetInfoResult">
+        <include refid="selectQuoteSheetInfoVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertQuoteSheetInfo" parameterType="QuoteSheetInfo" >
+        insert into quote_sheet_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="customerId != null">customer_id,</if>
+            <if test="recordCode != null">record_code,</if>
+            <if test="projectName != null">project_name,</if>
+            <if test="customerName != null">customer_name,</if>
+            <if test="companyName != null">company_name,</if>
+            <if test="masterCategory != null">master_category,</if>
+            <if test="masterAbbreviation != null">master_abbreviation,</if>
+            <if test="totalPrice != null">total_price,</if>
+            <if test="expertEvaluation != null">expert_evaluation,</if>
+            <if test="discount != null">discount,</if>
+            <if test="discountPrice != null">discount_price,</if>
+            <if test="excludeTaxesPrice != null">exclude_taxes_price,</if>
+            <if test="taxes != null">taxes,</if>
+            <if test="salesman != null">salesman,</if>
+            <if test="telephone != null">telephone,</if>
+            <if test="email != null">email,</if>
+            <if test="serviceName != null">service_name,</if>
+            <if test="serviceTelephone != null">service_telephone,</if>
+            <if test="serviceEmail != null">service_email,</if>
+            <if test="quoteProject != null">quote_project,</if>
+            <if test="salesInfo != null">sales_info,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="remarks != null">remarks,</if>
+            <if test="masterCategoryId != null">master_category_id,</if>
+            <if test="urgentExpense != null">urgent_expense,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="customerId != null">#{customerId},</if>
+            <if test="recordCode != null">#{recordCode},</if>
+            <if test="projectName != null">#{projectName},</if>
+            <if test="customerName != null">#{customerName},</if>
+            <if test="companyName != null">#{companyName},</if>
+            <if test="masterCategory != null">#{masterCategory},</if>
+            <if test="masterAbbreviation != null">#{masterAbbreviation},</if>
+            <if test="totalPrice != null">#{totalPrice},</if>
+            <if test="expertEvaluation != null">#{expertEvaluation},</if>
+            <if test="discount != null">#{discount},</if>
+            <if test="discountPrice != null">#{discountPrice},</if>
+            <if test="excludeTaxesPrice != null">#{excludeTaxesPrice},</if>
+            <if test="taxes != null">#{taxes},</if>
+            <if test="salesman != null">#{salesman},</if>
+            <if test="telephone != null">#{telephone},</if>
+            <if test="email != null">#{email},</if>
+            <if test="serviceName != null">#{serviceName},</if>
+            <if test="serviceTelephone != null">#{serviceTelephone},</if>
+            <if test="serviceEmail != null">#{serviceEmail},</if>
+            <if test="quoteProject != null">#{quoteProject},</if>
+            <if test="salesInfo != null">#{salesInfo},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="remarks != null">#{remarks},</if>
+            <if test="masterCategoryId != null">#{masterCategoryId},</if>
+            <if test="urgentExpense != null">#{urgentExpense},</if>
+         </trim>
+    </insert>
+
+    <update id="updateQuoteSheetInfo" parameterType="QuoteSheetInfo">
+        update quote_sheet_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="customerId != null">customer_id = #{customerId},</if>
+            <if test="recordCode != null">record_code = #{recordCode},</if>
+            <if test="projectName != null">project_name = #{projectName},</if>
+            <if test="customerName != null">customer_name = #{customerName},</if>
+            <if test="companyName != null">company_name = #{companyName},</if>
+            <if test="masterCategory != null">master_category = #{masterCategory},</if>
+            <if test="masterAbbreviation != null">master_abbreviation = #{masterAbbreviation},</if>
+            <if test="totalPrice != null">total_price = #{totalPrice},</if>
+            <if test="expertEvaluation != null">expert_evaluation = #{expertEvaluation},</if>
+            <if test="discount != null">discount = #{discount},</if>
+            <if test="discountPrice != null">discount_price = #{discountPrice},</if>
+            <if test="excludeTaxesPrice != null">exclude_taxes_price = #{excludeTaxesPrice},</if>
+            <if test="taxes != null">taxes = #{taxes},</if>
+            <if test="salesman != null">salesman = #{salesman},</if>
+            <if test="telephone != null">telephone = #{telephone},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="serviceName != null">service_name = #{serviceName},</if>
+            <if test="serviceTelephone != null">service_telephone = #{serviceTelephone},</if>
+            <if test="serviceEmail != null">service_email = #{serviceEmail},</if>
+            <if test="quoteProject != null">quote_project = #{quoteProject},</if>
+            <if test="salesInfo != null">sales_info = #{salesInfo},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="remarks != null">remarks = #{remarks},</if>
+            <if test="masterCategoryId != null">master_category_id = #{masterCategoryId},</if>
+            <if test="urgentExpense != null">urgent_expense = #{urgentExpense},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteQuoteSheetInfoById" parameterType="String">
+        delete from quote_sheet_info where id = #{id}
+    </delete>
+
+    <delete id="deleteQuoteSheetInfoByIds" parameterType="String">
+        delete from quote_sheet_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

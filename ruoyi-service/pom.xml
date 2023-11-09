@@ -1,0 +1,28 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.ruoyi.cloud</groupId>
+        <artifactId>ruoyi-cloud</artifactId>
+        <version>1.1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>ruoyi-service</artifactId>
+    <packaging>pom</packaging>
+    <build/>
+    <modules>
+        <module>ruoyi-system</module>
+        <module>ruoyi-auth</module>
+        <module>ruoyi-activiti</module>
+        <module>file-service</module>
+        <module>socket-io-service</module>
+        <module>daily-service</module>
+        <module>quote-service</module>
+        <module>training-service</module>
+        <module>file-api</module>
+        <module>export-service</module>
+        <module>rabbitmq-service</module>
+        <module>ehs-service</module>
+        <module>sales-service</module>
+    </modules>
+</project>

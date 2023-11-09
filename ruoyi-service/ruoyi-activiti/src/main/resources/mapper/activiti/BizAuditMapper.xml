@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.BizAuditMapper">
+
+    <resultMap type="com.ruoyi.activiti.vo.HiTaskVo" id="HiTaskVoResult">
+        <result property="id" column="id"/>
+        <result property="procDefId" column="proc_def_id"/>
+        <result property="procInstId" column="proc_inst_id"/>
+        <result property="taskDefKey" column="task_def_key"/>
+        <result property="taskName" column="task_name"/>
+        <result property="auditorId" column="auditor_id"/>
+        <result property="auditor" column="auditor"/>
+        <result property="deleteReason" column="delete_reason"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="duration" column="duration"/>
+        <result property="auditId" column="audit_id"/>
+        <result property="result" column="result"/>
+        <result property="comment" column="comment"/>
+        <result property="procDefKey" column="proc_def_key"/>
+        <result property="procName" column="proc_name"/>
+        <result property="nowAuditor" column="now_auditor"/>
+        <result property="applyer" column="applyer"/>
+        <result property="title" column="title"/>
+        <result property="businessKey" column="business_key"/>
+        <result property="startUserId" column="start_user_id"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="applyTime" column="apply_time"/>
+
+
+    </resultMap>
+<!--已办-->
+    <select id="getHistoryTaskList" resultMap="HiTaskVoResult">
+        SELECT
+        ht.ID_  AS id,
+        ht.PROC_DEF_ID_ AS proc_def_id,
+        ht.PROC_INST_ID_ AS proc_inst_id,
+        ht.TASK_DEF_KEY_ AS task_def_key,
+        ht.NAME_ AS task_name,
+        ht.START_TIME_ AS start_time,
+        ht.END_TIME_ AS end_time,
+        ht.DURATION_ AS duration,
+        ht.DELETE_REASON_ AS delete_reason,
+        ba.id AS audit_id,
+        ba.result,
+        ba.`comment`,
+        bb.proc_def_key,
+        bb.proc_name,
+        bb.auditors AS now_auditor,
+        ba.applyer,
+        ba.auditor,
+        ba.auditor_id,
+        ba.del_flag,
+        hp.BUSINESS_KEY_ AS business_key,
+        hp.NAME_ AS title,
+        hp.START_USER_ID_ AS start_user_id
+
+        FROM
+        ACT_HI_TASKINST ht
+        LEFT JOIN biz_audit ba ON ht.ID_ = ba.task_id
+        LEFT JOIN ACT_HI_PROCINST hp ON ht.PROC_INST_ID_ = hp.ID_
+        LEFT JOIN biz_business bb ON bb.proc_inst_id = ht.PROC_INST_ID_
+        <where>
+            bb.del_flag = '0'
+            <if test="deleteReason !=null and deleteReason !=''">and ht.DELETE_REASON_ =#{deleteReason}</if>
+            <if test="auditorId !=null">and ba.auditor_id =#{auditorId}</if>
+            <if test="result !=null">and bb.result =#{result}</if>
+            <if test="taskName !=null and taskName !=''">and ht.NAME_ like concat('%', #{taskName}, '%')</if>
+            <if test="delFlag !=null">and ba.del_flag =#{delFlag}</if>
+            <if test="deptId !=null">and bb.dept_id =#{deptId}</if>
+            <if test="companyId !=null">and bb.company_id =#{companyId}</if>
+            <if test="applyCode !=null">and bb.apply_code like concat('%', #{applyCode}, '%')</if>
+            <if test="procInstId !=null and procInstId !=''">and ht.PROC_INST_ID_ =#{procInstId}</if>
+            <if test="procDefKey !=null and procDefKey !=''">and ba.proc_def_key like concat('%', #{procDefKey},'%')</if>
+            <if test="procName !=null and procName !=''">and bb.proc_name like concat('%', #{procName}, '%')</if>
+            <if test="title !=null and title !=''">and hp.NAME_ like concat('%', #{title}, '%')</if>
+            <if test="applyer !=null and applyer !=''">and ba.applyer like concat('%', #{applyer}, '%')</if>
+            <if test="procInstIdsStr !=null and procInstIdsStr !=''">and ht.PROC_INST_ID_ in (${procInstIdsStr})</if>
+
+        </where>
+        ORDER BY
+        bb.apply_time desc
+    </select>
+<!--历史-->
+    <select id="getHistoryTaskList2" resultMap="HiTaskVoResult">
+        SELECT
+        ht.ID_ AS id,
+        ht.PROC_DEF_ID_ AS proc_def_id,
+        ht.PROC_INST_ID_ AS proc_inst_id,
+        ht.TASK_DEF_KEY_ AS task_def_key,
+        ht.NAME_ AS task_name,
+        ht.START_TIME_ AS start_time,
+        ht.END_TIME_ AS end_time,
+        ht.DURATION_ AS duration,
+        ht.DELETE_REASON_ AS delete_reason,
+        ba.id as audit_id,
+        ba.result,
+        ba.`comment`,
+        bb.proc_def_key,
+        bb.proc_name,
+        bb.auditors AS now_auditor,
+        ba.applyer,
+        ba.auditor,
+        ba.auditor_id,
+        ba.del_flag,
+        hp.BUSINESS_KEY_ AS business_key,
+        hp.NAME_ AS title,
+        hp.START_USER_ID_ AS start_user_id
+        FROM
+        ACT_HI_TASKINST ht
+        LEFT JOIN biz_audit ba ON ht.ID_ = ba.task_id
+        LEFT JOIN ACT_HI_PROCINST hp ON ht.PROC_INST_ID_ = hp.ID_
+        LEFT JOIN biz_business bb ON bb.proc_inst_id = ht.PROC_INST_ID_
+        <where>
+            bb.del_flag = '0'
+            <if test="deleteReason !=null and deleteReason !=''">and ht.DELETE_REASON_ =#{deleteReason}</if>
+            <if test="auditorId !=null">and ba.auditor_id =#{auditorId}</if>
+            <if test="taskName !=null and taskName !=''">and ht.NAME_ like concat('%', #{taskName}, '%')</if>
+            <if test="delFlag !=null">and ba.del_flag =#{delFlag}</if>
+            <if test="procInstId !=null and procInstId !=''">and ht.PROC_INST_ID_ =#{procInstId}</if>
+            <if test="procDefKey !=null and procDefKey !=''">and ba.proc_def_key =#{procDefKey}</if>
+            <if test="procName !=null and procName !=''">and bb.proc_name like concat('%', #{procName}, '%')</if>
+            <if test="title !=null and title !=''">and hp.NAME_ like concat('%', #{title}, '%')</if>
+        </where>
+        order by ht.START_TIME_ desc
+
+    </select>
+<!--抄送-->
+    <select id="getHistoryTaskListCc" resultMap="HiTaskVoResult">
+        SELECT
+        ht.ID_  AS id,
+        ht.PROC_DEF_ID_ AS proc_def_id,
+        ht.PROC_INST_ID_ AS proc_inst_id,
+        ht.TASK_DEF_KEY_ AS task_def_key,
+        ht.NAME_ AS task_name,
+        ht.START_TIME_ AS start_time,
+        ht.END_TIME_ AS end_time,
+        ht.DURATION_ AS duration,
+        ht.DELETE_REASON_ AS delete_reason,
+        ba.id AS audit_id,
+        ba.result,
+        ba.`comment`,
+        bb.proc_def_key,
+        bb.proc_name,
+        ba.applyer,
+        bb.apply_time,
+        ba.auditor,
+        ba.auditor_id,
+        ba.del_flag,
+        hp.BUSINESS_KEY_ AS business_key,
+        hp.NAME_ AS title,
+        hp.START_USER_ID_ AS start_user_id
+               ,
+        bac.is_read
+        FROM
+        ACT_HI_TASKINST ht
+        LEFT JOIN biz_audit ba ON ht.ID_ = ba.task_id
+        LEFT JOIN ACT_HI_PROCINST hp ON ht.PROC_INST_ID_ = hp.ID_
+        LEFT JOIN biz_business bb ON bb.proc_inst_id = ht.PROC_INST_ID_
+        LEFT JOIN biz_act_cc bac ON bac.proc_inst_id = bb.proc_inst_id
+        <where>
+            bb.del_flag = '0'
+            AND ht.PROC_INST_ID_ IN ( SELECT a.proc_inst_id AS procInstId FROM biz_act_cc a WHERE a.del_flag = '0' AND a.cc_id = #{ccId} )
+            AND ht.ID_ IN (SELECT max( a.ID_ ) AS id FROM ACT_HI_TASKINST a GROUP BY a.PROC_INST_ID_  )
+            AND bac.cc_id = #{ccId}
+            <if test="deleteReason !=null and deleteReason !=''">and ht.DELETE_REASON_ =#{deleteReason}</if>
+            <if test="auditorId !=null">and ba.auditor_id =#{auditorId}</if>
+            <if test="taskName !=null and taskName !=''">and ht.NAME_ like concat('%', #{taskName}, '%')</if>
+            <if test="delFlag !=null">and ba.del_flag =#{delFlag}</if>
+            <if test="deptId !=null">and bb.dept_id =#{deptId}</if>
+            <if test="companyId !=null">and bb.company_id =#{companyId}</if>
+            <if test="applyCode !=null">and bb.apply_code like concat('%', #{applyCode}, '%')</if>
+            <if test="procInstId !=null and procInstId !=''">and ht.PROC_INST_ID_ =#{procInstId}</if>
+            <if test="procDefKey !=null and procDefKey !=''">and ba.proc_def_key =#{procDefKey}</if>
+            <if test="procName !=null and procName !=''">and bb.proc_name like concat('%', #{procName}, '%')</if>
+            <if test="title !=null and title !=''">and hp.NAME_ like concat('%', #{title}, '%')</if>
+            <if test="applyer !=null and applyer !=''">and ba.applyer like concat('%', #{applyer}, '%')</if>
+            <if test="procInstIdsStr !=null and procInstIdsStr !=''">and ht.PROC_INST_ID_ in (${procInstIdsStr})</if>
+        </where>
+        GROUP BY
+        ht.ID_ ,
+        ht.PROC_DEF_ID_ ,
+        ht.PROC_INST_ID_ ,
+        ht.TASK_DEF_KEY_ ,
+        ht.NAME_ ,
+        ht.START_TIME_ ,
+        ht.END_TIME_ ,
+        ht.DURATION_ ,
+        ht.DELETE_REASON_ ,
+        ba.id ,
+        ba.result,
+        ba.`comment`,
+        bb.proc_def_key,
+        bb.proc_name,
+        ba.applyer,
+        ba.auditor,
+        ba.auditor_id,
+        ba.del_flag,
+        hp.BUSINESS_KEY_ ,
+        hp.NAME_ ,
+        hp.START_USER_ID_ ,
+        bac.is_read,
+        bb.apply_time
+        ORDER BY
+        bb.apply_time
+               desc
+    </select>
+    <select id="getHistoryTaskListCcASC" resultMap="HiTaskVoResult">
+        SELECT
+        ht.ID_  AS id,
+        ht.PROC_DEF_ID_ AS proc_def_id,
+        ht.PROC_INST_ID_ AS proc_inst_id,
+        ht.TASK_DEF_KEY_ AS task_def_key,
+        ht.NAME_ AS task_name,
+        ht.START_TIME_ AS start_time,
+        ht.END_TIME_ AS end_time,
+        ht.DURATION_ AS duration,
+        ht.DELETE_REASON_ AS delete_reason,
+        ba.id AS audit_id,
+        ba.result,
+        ba.`comment`,
+        bb.proc_def_key,
+        bb.proc_name,
+        ba.applyer,
+        ba.auditor,
+        ba.auditor_id,
+        ba.del_flag,
+        hp.BUSINESS_KEY_ AS business_key,
+        hp.NAME_ AS title,
+        hp.START_USER_ID_ AS start_user_id
+        ,
+        bac.is_read
+        FROM
+        ACT_HI_TASKINST ht
+        LEFT JOIN biz_audit ba ON ht.ID_ = ba.task_id
+        LEFT JOIN ACT_HI_PROCINST hp ON ht.PROC_INST_ID_ = hp.ID_
+        LEFT JOIN biz_business bb ON bb.proc_inst_id = ht.PROC_INST_ID_
+        LEFT JOIN biz_act_cc bac ON bac.proc_inst_id = bb.proc_inst_id
+        <where>
+            bb.del_flag = '0'
+            AND ht.PROC_INST_ID_ IN ( SELECT a.proc_inst_id AS procInstId FROM biz_act_cc a WHERE a.del_flag = '0' AND a.cc_id = #{ccId} )
+            AND ht.ID_ IN (SELECT max( a.ID_ ) AS id FROM ACT_HI_TASKINST a GROUP BY a.PROC_INST_ID_  )
+            AND bac.cc_id = #{ccId}
+            <if test="deleteReason !=null and deleteReason !=''">and ht.DELETE_REASON_ =#{deleteReason}</if>
+            <if test="auditorId !=null">and ba.auditor_id =#{auditorId}</if>
+            <if test="taskName !=null and taskName !=''">and ht.NAME_ like concat('%', #{taskName}, '%')</if>
+            <if test="delFlag !=null">and ba.del_flag =#{delFlag}</if>
+            <if test="deptId !=null">and bb.dept_id =#{deptId}</if>
+            <if test="companyId !=null">and bb.company_id =#{companyId}</if>
+            <if test="applyCode !=null">and bb.apply_code like concat('%', #{applyCode}, '%')</if>
+            <if test="procInstId !=null and procInstId !=''">and ht.PROC_INST_ID_ =#{procInstId}</if>
+            <if test="procDefKey !=null and procDefKey !=''">and ba.proc_def_key =#{procDefKey}</if>
+            <if test="procName !=null and procName !=''">and bb.proc_name like concat('%', #{procName}, '%')</if>
+            <if test="title !=null and title !=''">and hp.NAME_ like concat('%', #{title}, '%')</if>
+            <if test="applyer !=null and applyer !=''">and ba.applyer like concat('%', #{applyer}, '%')</if>
+            <if test="procInstIdsStr !=null and procInstIdsStr !=''">and ht.PROC_INST_ID_ in (${procInstIdsStr})</if>
+        </where>
+        GROUP BY
+        ht.ID_ ,
+        ht.PROC_DEF_ID_ ,
+        ht.PROC_INST_ID_ ,
+        ht.TASK_DEF_KEY_ ,
+        ht.NAME_ ,
+        ht.START_TIME_ ,
+        ht.END_TIME_ ,
+        ht.DURATION_ ,
+        ht.DELETE_REASON_ ,
+        ba.id ,
+        ba.result,
+        ba.`comment`,
+        bb.proc_def_key,
+        bb.proc_name,
+        ba.applyer,
+        ba.auditor,
+        ba.auditor_id,
+        ba.del_flag,
+        hp.BUSINESS_KEY_ ,
+        hp.NAME_ ,
+        hp.START_USER_ID_ ,
+        bac.is_read,
+        bb.apply_time
+    </select>
+
+    <update id="deleteLogic">
+        update biz_audit set del_flag=true where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+</mapper>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.quote.mapper.QuoteBaseFactorMapper">
+    
+    <resultMap type="QuoteBaseFactor" id="QuoteBaseFactorResult">
+        <result property="id"    column="id"    />
+        <result property="categoryId"    column="category_id"    />
+        <result property="subcategoryId"    column="subcategory_id"    />
+        <result property="factorName"    column="factor_name"    />
+        <result property="standardInfo"    column="standard_info"    />
+        <result property="limitRange"    column="limit_range"    />
+        <result property="analysePrice"    column="analyse_price"    />
+        <result property="samplePrice"    column="sample_price"    />
+        <result property="price"    column="price"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="factorType"    column="factor_type"    />
+    </resultMap>
+
+    <sql id="selectQuoteBaseFactorVo">
+        select id, category_id, subcategory_id, factor_name, standard_info, limit_range, analyse_price, sample_price, price, del_flag, create_time, update_time,factor_type from quote_base_factor
+    </sql>
+
+    <select id="selectQuoteBaseFactorList" parameterType="QuoteBaseFactor" resultMap="QuoteBaseFactorResult">
+        <include refid="selectQuoteBaseFactorVo"/>
+        <where>  
+            <if test="categoryId != null "> and category_id = #{categoryId}</if>
+            <if test="subcategoryId != null "> and subcategory_id = #{subcategoryId}</if>
+            <if test="factorName != null  and factorName != ''"> and factor_name like concat('%', #{factorName}, '%')</if>
+            <if test="standardInfo != null  and standardInfo != ''"> and standard_info = #{standardInfo}</if>
+            <if test="limitRange != null  and limitRange != ''"> and limit_range = #{limitRange}</if>
+            <if test="analysePrice != null "> and analyse_price = #{analysePrice}</if>
+            <if test="samplePrice != null "> and sample_price = #{samplePrice}</if>
+            <if test="price != null "> and price = #{price}</if>
+            <if test="factorType != null "> and factor_type = #{factorType}</if>
+        </where>
+    </select>
+    
+    <select id="selectQuoteBaseFactorById" parameterType="java.lang.Long" resultMap="QuoteBaseFactorResult">
+        <include refid="selectQuoteBaseFactorVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertQuoteBaseFactor" parameterType="QuoteBaseFactor"  useGeneratedKeys="true" keyProperty="id">
+        insert into quote_base_factor
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="categoryId != null">category_id,</if>
+            <if test="subcategoryId != null">subcategory_id,</if>
+            <if test="factorName != null">factor_name,</if>
+            <if test="standardInfo != null">standard_info,</if>
+            <if test="limitRange != null">limit_range,</if>
+            <if test="analysePrice != null">analyse_price,</if>
+            <if test="samplePrice != null">sample_price,</if>
+            <if test="price != null">price,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="factorType != null">factor_type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="categoryId != null">#{categoryId},</if>
+            <if test="subcategoryId != null">#{subcategoryId},</if>
+            <if test="factorName != null">#{factorName},</if>
+            <if test="standardInfo != null">#{standardInfo},</if>
+            <if test="limitRange != null">#{limitRange},</if>
+            <if test="analysePrice != null">#{analysePrice},</if>
+            <if test="samplePrice != null">#{samplePrice},</if>
+            <if test="price != null">#{price},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="factorType != null">#{factorType},</if>
+         </trim>
+    </insert>
+
+    <update id="updateQuoteBaseFactor" parameterType="QuoteBaseFactor">
+        update quote_base_factor
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="subcategoryId != null">subcategory_id = #{subcategoryId},</if>
+            <if test="factorName != null">factor_name = #{factorName},</if>
+            <if test="standardInfo != null">standard_info = #{standardInfo},</if>
+            <if test="limitRange != null">limit_range = #{limitRange},</if>
+            <if test="analysePrice != null">analyse_price = #{analysePrice},</if>
+            <if test="samplePrice != null">sample_price = #{samplePrice},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="factorType != null">factor_type = #{factorType},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteQuoteBaseFactorById" parameterType="Long">
+        delete from quote_base_factor where id = #{id}
+    </delete>
+
+    <delete id="deleteQuoteBaseFactorByIds" parameterType="String">
+        delete from quote_base_factor where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

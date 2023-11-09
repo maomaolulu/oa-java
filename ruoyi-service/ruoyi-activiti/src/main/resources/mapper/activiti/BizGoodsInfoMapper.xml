@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.BizGoodsInfoMapper">
+
+    <resultMap type="BizGoodsInfo" id="BizGoodsInfoResult">
+        <result property="id"    column="id"    />
+        <result property="purchaseId"    column="purchase_id"    />
+        <result property="name"    column="name"    />
+        <result property="model"    column="model"    />
+        <result property="unit"    column="unit"    />
+        <result property="amount"    column="amount"    />
+        <result property="actualAmount"    column="actual_amount"    />
+        <result property="remark"    column="remark"    />
+        <result property="usages"    column="usages"    />
+        <result property="expectDate"    column="expect_date"    />
+
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="brand"    column="brand"    />
+        <result property="purchaseDate"    column="purchase_date"    />
+        <result property="isStorage"    column="is_storage"    />
+        <result property="isReceived"    column="is_received"    />
+        <result property="isPurchase"    column="is_purchase"    />
+        <result property="itemType"    column="item_type"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="price"    column="price"    />
+        <result property="ascriptionDept"    column="ascription_dept"    />
+    </resultMap>
+
+    <resultMap type="com.ruoyi.activiti.vo.BizGoodsInfoVo"  id="BizGoodsInfoVoResult">
+        <result property="id"    column="id"    />
+        <result property="purchaseId"    column="purchase_id"    />
+        <result property="name"    column="name"    />
+        <result property="model"    column="model"    />
+        <result property="unit"    column="unit"    />
+        <result property="amount"    column="amount"    />
+        <result property="actualAmount"    column="actual_amount"    />
+        <result property="remark"    column="remark"    />
+        <result property="usages"    column="usages"    />
+        <result property="expectDate"    column="expect_date"    />
+
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="brand"    column="brand"    />
+        <result property="purchaseDate"    column="purchase_date"    />
+        <result property="isStorage"    column="is_storage"    />
+        <result property="isReceived"    column="is_received"    />
+        <result property="isPurchase"    column="is_purchase"    />
+        <result property="itemType"    column="item_type"    />
+    </resultMap>
+
+    <sql id="selectBizGoodsInfoVo">
+        select id, brand, purchase_id, name, model, unit, amount, actual_amount, warehousing_amount, remark, usages, purchase_date, expect_date, is_storage, is_received, is_purchase, del_flag, create_by, create_time, update_by, update_time, item_type, dept_id, price, purchase_price, supplier, purchaser, purchase_time, is_acceptance, single_price, payment_method, arrival_date, ascription_dept, good_type, spu_id, old, apply_remark, apply_name, apply_model, apply_unit, average_quote, is_transfer, is_invalid, transfer_num, finance_status, payer, pay_time
+        from biz_goods_info
+    </sql>
+
+    <select id="selectBizGoodsInfoList" parameterType="BizGoodsInfo" resultMap="BizGoodsInfoResult">
+        <include refid="selectBizGoodsInfoVo"/>
+        <where>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="purchaseId != null  and purchaseId != ''"> and purchase_id = #{purchaseId}</if>
+        </where>
+    </select>
+
+    <select id="selectBizGoodsInfoById" parameterType="Long" resultMap="BizGoodsInfoResult">
+        <include refid="selectBizGoodsInfoVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertBizGoodsInfo" parameterType="BizGoodsInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_goods_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="purchaseId != null ">purchase_id,</if>
+            <if test="name != null  and name != ''">name,</if>
+            <if test="model != null  and model != ''">model,</if>
+            <if test="unit != null  and unit != ''">unit,</if>
+            <if test="amount != null ">amount,</if>
+            <if test="actualAmount != null ">actual_amount,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="usages != null  and usages != ''">usages,</if>
+            <if test="expectDate != null ">expect_date,</if>
+
+            <if test="delFlag != null  and delFlag != ''">del_flag,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="purchaseDate != null ">purchase_date,</if>
+            <if test="brand != null ">brand,</if>
+            <if test="isStorage != null ">is_storage,</if>
+            <if test="isReceived != null ">is_received,</if>
+            <if test="isPurchase != null ">is_purchase,</if>
+            <if test="itemType != null ">item_type,</if>
+            <if test="deptId != null ">dept_id,</if>
+            <if test="price != null and price >0 ">price,</if>
+            <if test="ascriptionDept != null ">ascription_dept,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="purchaseId != null ">#{purchaseId},</if>
+            <if test="name != null  and name != ''">#{name},</if>
+            <if test="model != null  and model != ''">#{model},</if>
+            <if test="unit != null  and unit != ''">#{unit},</if>
+            <if test="amount != null ">#{amount},</if>
+            <if test="actualAmount != null ">#{actualAmount},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="usages != null  and usages != ''">#{usages},</if>
+            <if test="expectDate != null ">#{expectDate},</if>
+
+            <if test="delFlag != null  and delFlag != ''">#{delFlag},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="purchaseDate != null ">#{purchaseDate},</if>
+            <if test="brand != null ">#{brand},</if>
+            <if test="isStorage != null ">#{isStorage},</if>
+            <if test="isReceived != null ">#{isReceived},</if>
+            <if test="isPurchase != null ">#{isPurchase},</if>
+            <if test="itemType != null ">#{itemType},</if>
+            <if test="deptId != null ">#{deptId},</if>
+            <if test="price != null and price >0 ">#{price},</if>
+            <if test="ascription_dept != null ">#{ascriptionDept},</if>
+        </trim>
+    </insert>
+
+    <update id="updateBizGoodsInfo" parameterType="BizGoodsInfo">
+        update biz_goods_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="purchaseId != null ">purchase_id = #{purchaseId},</if>
+            <if test="name != null  and name != ''">name = #{name},</if>
+            <if test="model != null  and model != ''">model = #{model},</if>
+            <if test="unit != null  and unit != ''">unit = #{unit},</if>
+            <if test="amount != null ">amount = #{amount},</if>
+            <if test="actualAmount != null ">actual_amount = #{actualAmount},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="usages != null  and usages != ''">usages = #{usages},</if>
+            <if test="expectDate != null ">expect_date = #{expectDate},</if>
+
+            <if test="delFlag != null  and delFlag != ''">del_flag = #{delFlag},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="purchaseDate != null ">purchase_date = #{purchaseDate},</if>
+            <if test="brand != null ">brand = #{brand},</if>
+            <if test="isStorage != null ">is_storage = #{isStorage},</if>
+            <if test="isReceived != null ">is_received = #{isReceived},</if>
+            <if test="isPurchase != null ">is_purchase = #{isPurchase},</if>
+            <if test="itemType != null ">item_type = #{itemType},</if>
+            <if test="deptId != null ">dept_id = #{deptId},</if>
+            <if test="price != null ">price = #{price},</if>
+            <if test="ascriptionDept != null ">ascription_dept = #{ascriptionDept},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizGoodsInfoById" parameterType="Long">
+        delete from biz_goods_info where id = #{id}
+    </delete>
+
+    <delete id="deleteBizGoodsInfoByIds" parameterType="String">
+        delete from biz_goods_info where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

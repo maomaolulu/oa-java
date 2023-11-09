@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.quote.mapper.QuoteSheetItemsMapper">
+
+    <resultMap type="QuoteTestItemDetailsVO" id="QuoteTestExpensesDetailResult">
+        <result property="postName" column="post_name"/>
+        <result property="item" column="factor_name"/>
+        <result property="pointNumber" column="point_number"/>
+        <result property="price" column="price"/>
+        <result property="totalPrice" column="total_price"/>
+    </resultMap>
+
+    <select id="selectQuoteSheetItemsBySheetId" parameterType="java.lang.String" resultMap="QuoteSheetItemsResult">
+        <include refid="selectQuoteSheetItemsVo"/>
+        where sheet_id = #{sheetId}
+    </select>
+
+    <select id="selectQuoteSheetItems" resultMap="QuoteSheetItemsResult">
+        <include refid="selectQuoteSheetItemsVo"/>
+        where sheet_id = #{sheetId}
+        and post_name = #{postName}
+    </select>
+
+    <select id="selectQuoteSheetItemsBySubId" resultMap="QuoteSheetItemsResult">
+        <include refid="selectQuoteSheetItemsVo"/>
+        <where>
+            <if test="postName != null  and postName != ''">and post_name = #{postName}</if>
+            <if test="sheetId != null  and sheetId != ''">and sheet_id = #{sheetId}</if>
+            <if test="subId != null ">and sub_id = #{subId}</if>
+            <if test="postId != null ">and post_id = #{postId}</if>
+        </where>
+    </select>
+
+    <select id="selectPostNameBySheetId" resultType="java.lang.String">
+        select post_name
+        from quote_sheet_items
+        where sheet_id = #{sheetId}
+          and sub_id = #{subId}
+    </select>
+
+    <update id="updateTempFlag" parameterType="QuoteSheetItems">
+        update quote_sheet_items
+        set temp_flag = #{tempFlag}
+        where sheet_id = #{sheetId}
+    </update>
+
+    <select id="selectQuoteSheetItemsDetailsList" parameterType="QuoteSheetItems"
+            resultMap="QuoteTestExpensesDetailResult">
+        select post_name,factor_name,point_number,price,total_price from quote_sheet_items
+        <where>
+            <if test="sheetId != null  and sheetId != ''">and sheet_id = #{sheetId}</if>
+            <if test="subId != null ">and sub_id = #{subId}</if>
+        </where>
+    </select>
+
+    <delete id="deleteQuoteSheetItemsBySheetId" parameterType="QuoteSheetItems">
+        delete
+        from quote_sheet_items
+        <where>
+            <if test="postName != null  and postName != ''">and post_name = #{postName}</if>
+            <if test="sheetId != null  and sheetId != ''">and sheet_id = #{sheetId}</if>
+            <if test="subId != null ">and sub_id = #{subId}</if>
+            <if test="postId != null ">and post_id = #{postId}</if>
+        </where>
+    </delete>
+
+    <delete id="deleteQuoteSheetItems" parameterType="QuoteSheetItems">
+        delete
+        from quote_sheet_items
+        <where>
+            <if test="sheetId != null  and sheetId != ''">and sheet_id = #{sheetId}</if>
+            <if test="subId != null ">and sub_id = #{subId}</if>
+            <if test="postId != null ">and post_id = #{postId}</if>
+            <if test="postName != null  and postName != ''">and post_name like concat('%', #{postName}, '%')</if>
+            <if test="factorName != null  and factorName != ''">and factor_name like concat('%', #{factorName}, '%')
+            </if>
+            <if test="standardInfo != null  and standardInfo != ''">and standard_info = #{standardInfo}</if>
+            <if test="limitRange != null  and limitRange != ''">and limit_range = #{limitRange}</if>
+            <if test="price != null ">and price = #{price}</if>
+            <if test="pointNumber != null ">and point_number = #{pointNumber}</if>
+            <if test="totalPrice != null ">and total_price = #{totalPrice}</if>
+            <if test="tempFlag != null ">and temp_flag = #{tempFlag}</if>
+        </where>
+    </delete>
+
+    <delete id="deleteTempSheetItem" parameterType="QuoteSheetItems">
+        delete
+        from quote_sheet_items
+        where temp_flag = #{tempFlag}
+          and create_time &lt; #{createTime}
+    </delete>
+</mapper>

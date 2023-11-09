@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.quote.mapper.QuoteIndustryInfoMapper">
+
+    <resultMap type="QuoteIndustryInfoVO" id="QuoteIndustryInfoUserResult">
+        <result property="id" column="id"/>
+        <result property="industryName" column="industry_name"/>
+        <result property="industryCode" column="industry_code"/>
+        <result property="subId" column="sub_id"/>
+        <result property="subName" column="sub_name"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="projectId" column="project_id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="creator" column="creator"/>
+    </resultMap>
+
+    <resultMap id="IndustryInfoResult" type="QuoteIndustryInfoVO">
+        <result property="id" column="id"/>
+        <result property="industryName" column="industry_name"/>
+        <result property="industryCode" column="industry_code"/>
+        <result property="projectId" column="project_id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="creator" column="creator"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="categoryName" column="category_name"/>
+    </resultMap>
+
+    <select id="selectIndustryInfoList" parameterType="QuoteIndustryInfo" resultMap="IndustryInfoResult">
+        select t1.*, t2.category_name
+        from quote_industry_info t1
+        left join quote_master_category t2 on t1.project_id = t2.id
+        <where>
+            <if test="industryName != null  and industryName != ''">and t1.industry_name like
+                concat('%',#{industryName}, '%')
+            </if>
+            <if test="projectId != null ">and t1.project_id = #{projectId}</if>
+            <if test="industryCode != null  and industryCode != ''">and t1.industry_code = #{industryCode}</if>
+        </where>
+        order by t1.create_time desc
+    </select>
+
+    <select id="selectQuoteIndustryInfo" parameterType="QuoteIndustryInfo"
+            resultMap="QuoteIndustryInfoResult">
+        <include refid="selectQuoteIndustryInfoVo"/>
+        <where>
+            <if test="industryName != null  and industryName != ''">and industry_name = #{industryName}</if>
+            <if test="industryCode != null  and industryCode != ''">and industry_code = #{industryCode}</if>
+            <if test="parentId != null ">and parent_id = #{parentId}</if>
+            <if test="projectId != null ">and project_id = #{projectId}</if>
+        </where>
+    </select>
+
+    <select id="selectQuoteIndustryInfoUserList" resultMap="QuoteIndustryInfoUserResult"
+            parameterType="QuoteIndustryInfoVO">
+        select t3.id,
+        t3.industry_name,
+        sub_id,
+        sub_name,
+        t4.category_name,
+        t4.id project_id,
+        t3.creator,
+        t3.create_time
+        from (select t1.id, t1.industry_name, t2.sub_id, t2.sub_name, t1.project_id, t1.creator, t1.create_time
+        from (select id, industry_name, project_id, creator, create_time
+        from quote_industry_info
+        where parent_id = 0 and project_id = 2) t1
+        left join (select id sub_id, industry_name sub_name, parent_id from quote_industry_info) t2
+        on t1.id = t2.parent_id
+        <where>
+            <if test="industryName != null  and industryName != ''">and t1.industry_name like concat('%',
+                #{industryName},'%')
+            </if>
+            <if test="subName != null  and subName != ''">and t2.sub_name like concat('%',
+                #{subName},'%')
+            </if>
+        </where>
+        ) t3
+        left join quote_master_category t4 on t3.project_id = t4.id
+        order by t3.create_time desc
+    </select>
+
+    <delete id="deleteQuoteIndustryInfoByParentId" parameterType="java.lang.Long">
+        delete
+        from quote_industry_info
+        where parent_id = #{parentId}
+    </delete>
+
+    <select id="selectQuoteIndustryInfoEditList" parameterType="QuoteIndustryInfo" resultMap="QuoteIndustryInfoResult">
+        <include refid="selectQuoteIndustryInfoVo"/>
+        <where>
+            <if test="industryName != null  and industryName != ''">and industry_name = #{industryName}</if>
+            <if test="industryCode != null  and industryCode != ''">and industry_code = #{industryCode}</if>
+            <if test="projectId != null ">and project_id = #{projectId}</if>
+            <if test="parentId != null ">and parent_id = #{parentId}</if>
+            <if test="creator != null  and creator != ''">and creator = #{creator}</if>
+        </where>
+    </select>
+</mapper>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.quote.mapper.QuoteCategoryPollutantMapper">
+    
+    <resultMap type="QuoteCategoryPollutant" id="QuoteCategoryPollutantResult">
+        <result property="id"    column="id"    />
+        <result property="masterCategoryId"    column="master_category_id"    />
+        <result property="subCategoryId"    column="sub_category_id"    />
+        <result property="pollutantTypeId"    column="pollutant_type_id"    />
+        <result property="pollutantId"    column="pollutant_id"    />
+        <result property="projectId"    column="project_id"    />
+        <result property="creator"    column="creator"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="natureName"    column="nature_name"    />
+        <result property="natureIds"    column="nature_ids"    />
+    </resultMap>
+
+    <sql id="selectQuoteCategoryPollutantVo">
+        select id, master_category_id, sub_category_id, pollutant_type_id, pollutant_id, project_id, creator, create_time, update_time, nature_name, nature_ids from quote_category_pollutant
+    </sql>
+
+    <select id="selectQuoteCategoryPollutantList" parameterType="QuoteCategoryPollutant" resultMap="QuoteCategoryPollutantResult">
+        <include refid="selectQuoteCategoryPollutantVo"/>
+        <where>  
+            <if test="masterCategoryId != null "> and master_category_id = #{masterCategoryId}</if>
+            <if test="subCategoryId != null "> and sub_category_id = #{subCategoryId}</if>
+            <if test="pollutantTypeId != null "> and pollutant_type_id = #{pollutantTypeId}</if>
+            <if test="pollutantId != null "> and pollutant_id = #{pollutantId}</if>
+            <if test="projectId != null "> and project_id = #{projectId}</if>
+            <if test="creator != null  and creator != ''"> and creator = #{creator}</if>
+            <if test="natureName != null  and natureName != ''"> and nature_name like concat('%', #{natureName}, '%')</if>
+            <if test="natureIds != null  and natureIds != ''"> and nature_ids = #{natureIds}</if>
+        </where>
+    </select>
+    
+    <select id="selectQuoteCategoryPollutantById" parameterType="Long" resultMap="QuoteCategoryPollutantResult">
+        <include refid="selectQuoteCategoryPollutantVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertQuoteCategoryPollutant" parameterType="QuoteCategoryPollutant"  useGeneratedKeys="true" keyProperty="id">
+        insert into quote_category_pollutant
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="masterCategoryId != null">master_category_id,</if>
+            <if test="subCategoryId != null">sub_category_id,</if>
+            <if test="pollutantTypeId != null">pollutant_type_id,</if>
+            <if test="pollutantId != null">pollutant_id,</if>
+            <if test="projectId != null">project_id,</if>
+            <if test="creator != null">creator,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="natureName != null">nature_name,</if>
+            <if test="natureIds != null">nature_ids,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="masterCategoryId != null">#{masterCategoryId},</if>
+            <if test="subCategoryId != null">#{subCategoryId},</if>
+            <if test="pollutantTypeId != null">#{pollutantTypeId},</if>
+            <if test="pollutantId != null">#{pollutantId},</if>
+            <if test="projectId != null">#{projectId},</if>
+            <if test="creator != null">#{creator},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="natureName != null">#{natureName},</if>
+            <if test="natureIds != null">#{natureIds},</if>
+         </trim>
+    </insert>
+
+    <update id="updateQuoteCategoryPollutant" parameterType="QuoteCategoryPollutant">
+        update quote_category_pollutant
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="masterCategoryId != null">master_category_id = #{masterCategoryId},</if>
+            <if test="subCategoryId != null">sub_category_id = #{subCategoryId},</if>
+            <if test="pollutantTypeId != null">pollutant_type_id = #{pollutantTypeId},</if>
+            <if test="pollutantId != null">pollutant_id = #{pollutantId},</if>
+            <if test="projectId != null">project_id = #{projectId},</if>
+            <if test="creator != null">creator = #{creator},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="natureName != null">nature_name = #{natureName},</if>
+            <if test="natureIds != null">nature_ids = #{natureIds},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteQuoteCategoryPollutantById" parameterType="Long">
+        delete from quote_category_pollutant where id = #{id}
+    </delete>
+
+    <delete id="deleteQuoteCategoryPollutantByIds" parameterType="String">
+        delete from quote_category_pollutant where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.training.mapper.TraTrainCategoryMapper">
+
+    <resultMap type="TraTrainCategory" id="TraTrainCategoryResult">
+        <result property="id" column="id"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="creator" column="creator"/>
+        <result property="createTime" column="create_time"/>
+        <result property="lastModifer" column="last_modifer"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="coverUrl" column="cover_url"/>
+        <result property="cssClass" column="css_class"/>
+        <result property="companyId" column="company_id"/>
+        <result property="types" column="types"/>
+    </resultMap>
+
+    <sql id="selectTraTrainCategoryVo">
+        select id, category_name, creator, create_time, last_modifer, update_time,cover_url,css_class,company_id,types from tra_train_category
+    </sql>
+
+    <select id="selectTraTrainCategoryList" parameterType="TraTrainCategory" resultMap="TraTrainCategoryResult">
+        <include refid="selectTraTrainCategoryVo"/>
+        <where>
+            <if test="categoryName != null  and categoryName != ''">and category_name like concat('%', #{categoryName},
+                '%')
+            </if>
+            <if test="creator != null  and creator != ''">and creator = #{creator}</if>
+            <if test="lastModifer != null  and lastModifer != ''">and last_modifer = #{lastModifer}</if>
+            <if test="companyId != null  and companyId != ''">and company_id = #{companyId}</if>
+        </where>
+    </select>
+
+    <select id="selectMoreTrainCategoryList" parameterType="TraTrainCategory" resultMap="TraTrainCategoryResult">
+        <include refid="selectTraTrainCategoryVo"/>
+        where company_id in
+        <foreach collection="ids" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="selectTraTrainCategoryById" parameterType="Long" resultMap="TraTrainCategoryResult">
+        <include refid="selectTraTrainCategoryVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertTraTrainCategory" parameterType="TraTrainCategory" useGeneratedKeys="true" keyProperty="id">
+        insert into tra_train_category
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="categoryName != null">category_name,</if>
+            <if test="creator != null">creator,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="lastModifer != null">last_modifer,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="coverUrl != null">cover_url,</if>
+            <if test="cssClass != null">css_class,</if>
+            <if test="companyId != null">company_id,</if>
+            <if test="types != null">types,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="categoryName != null">#{categoryName},</if>
+            <if test="creator != null">#{creator},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="lastModifer != null">#{lastModifer},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="coverUrl != null">#{coverUrl},</if>
+            <if test="cssClass != null">#{cssClass},</if>
+            <if test="companyId != null">#{companyId},</if>
+            <if test="types != null">#{types},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTraTrainCategory" parameterType="TraTrainCategory">
+        update tra_train_category
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="categoryName != null">category_name = #{categoryName},</if>
+            <if test="creator != null">creator = #{creator},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="lastModifer != null">last_modifer = #{lastModifer},</if>
+            <if test="coverUrl != null">cover_url = #{coverUrl},</if>
+            <if test="cssClass != null">css_class = #{cssClass},</if>
+            <if test="types != null">types = #{types},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTraTrainCategoryById" parameterType="Long">
+        delete from tra_train_category where id = #{id}
+    </delete>
+
+    <delete id="deleteTraTrainCategoryByIds" parameterType="String">
+        delete from tra_train_category where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getUserTypeList" parameterType="Long" resultMap="TraTrainCategoryResult">
+        SELECT DISTINCT
+            ( t2.train_id ) AS id,
+            t3.category_name
+        FROM
+            tra_course_user t1
+            LEFT JOIN tra_course_info t2 ON t1.course_id = t2.id
+            LEFT JOIN tra_train_category t3 ON t2.train_id = t3.id
+        WHERE
+            t1.user_id = #{userId}
+    </select>
+
+    <select id="getDeptTypeList" parameterType="Long" resultMap="TraTrainCategoryResult">
+        SELECT DISTINCT(t1.train_id) AS id,t2.category_name
+        FROM
+            tra_course_info t1
+            LEFT JOIN tra_train_category t2 ON t1.train_id = t2.id
+        WHERE
+         	t1.company_id=#{companyId} AND t1.issue_flag = '1'
+    </select>
+
+
+</mapper>

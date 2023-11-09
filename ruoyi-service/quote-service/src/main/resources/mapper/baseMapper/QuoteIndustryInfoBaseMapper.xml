@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.quote.mapper.QuoteIndustryInfoMapper">
+    
+    <resultMap type="QuoteIndustryInfo" id="QuoteIndustryInfoResult">
+        <result property="id"    column="id"    />
+        <result property="industryName"    column="industry_name"    />
+        <result property="industryCode"    column="industry_code"    />
+        <result property="projectId"    column="project_id"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="creator"    column="creator"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectQuoteIndustryInfoVo">
+        select id, industry_name, industry_code, project_id, parent_id, creator, del_flag, create_time, update_time from quote_industry_info
+    </sql>
+
+    <select id="selectQuoteIndustryInfoList" parameterType="QuoteIndustryInfo" resultMap="QuoteIndustryInfoResult">
+        <include refid="selectQuoteIndustryInfoVo"/>
+        <where>  
+            <if test="industryName != null  and industryName != ''"> and industry_name like concat('%', #{industryName}, '%')</if>
+            <if test="industryCode != null  and industryCode != ''"> and industry_code like concat('%', #{industryCode}, '%')</if>
+            <if test="projectId != null "> and project_id = #{projectId}</if>
+            <if test="parentId != null "> and parent_id = #{parentId}</if>
+            <if test="creator != null  and creator != ''"> and creator = #{creator}</if>
+        </where>
+    </select>
+    
+    <select id="selectQuoteIndustryInfoById" parameterType="Long" resultMap="QuoteIndustryInfoResult">
+        <include refid="selectQuoteIndustryInfoVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertQuoteIndustryInfo" parameterType="QuoteIndustryInfo"  useGeneratedKeys="true" keyProperty="id">
+        insert into quote_industry_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="industryName != null">industry_name,</if>
+            <if test="industryCode != null">industry_code,</if>
+            <if test="projectId != null">project_id,</if>
+            <if test="parentId != null">parent_id,</if>
+            <if test="creator != null">creator,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="industryName != null">#{industryName},</if>
+            <if test="industryCode != null">#{industryCode},</if>
+            <if test="projectId != null">#{projectId},</if>
+            <if test="parentId != null">#{parentId},</if>
+            <if test="creator != null">#{creator},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateQuoteIndustryInfo" parameterType="QuoteIndustryInfo">
+        update quote_industry_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="industryName != null">industry_name = #{industryName},</if>
+            <if test="industryCode != null">industry_code = #{industryCode},</if>
+            <if test="projectId != null">project_id = #{projectId},</if>
+            <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="creator != null">creator = #{creator},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteQuoteIndustryInfoById" parameterType="Long">
+        delete from quote_industry_info where id = #{id}
+    </delete>
+
+    <delete id="deleteQuoteIndustryInfoByIds" parameterType="String">
+        delete from quote_industry_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

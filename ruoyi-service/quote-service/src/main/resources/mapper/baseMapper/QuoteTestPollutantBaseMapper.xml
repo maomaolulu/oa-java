@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.quote.mapper.QuoteTestPollutantMapper">
+    
+    <resultMap type="QuoteTestPollutant" id="QuoteTestPollutantResult">
+        <result property="id"    column="id"    />
+        <result property="pollutantId"    column="pollutant_id"    />
+        <result property="creator"    column="creator"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectQuoteTestPollutantVo">
+        select id, pollutant_id, creator, create_time from quote_test_pollutant
+    </sql>
+
+    <select id="selectQuoteTestPollutantList" parameterType="QuoteTestPollutant" resultMap="QuoteTestPollutantResult">
+        <include refid="selectQuoteTestPollutantVo"/>
+        <where>
+            <if test="id != null "> and id = #{id}</if>
+            <if test="pollutantId != null "> and pollutant_id = #{pollutantId}</if>
+            <if test="creator != null  and creator != ''"> and creator = #{creator}</if>
+        </where>
+    </select>
+    
+    <select id="selectQuoteTestPollutantById" parameterType="Long" resultMap="QuoteTestPollutantResult">
+        <include refid="selectQuoteTestPollutantVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertQuoteTestPollutant" parameterType="QuoteTestPollutant">
+        insert into quote_test_pollutant
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="pollutantId != null">pollutant_id,</if>
+            <if test="creator != null">creator,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="pollutantId != null">#{pollutantId},</if>
+            <if test="creator != null">#{creator},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateQuoteTestPollutant" parameterType="QuoteTestPollutant">
+        update quote_test_pollutant
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="pollutantId != null">pollutant_id = #{pollutantId},</if>
+            <if test="creator != null">creator = #{creator},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteQuoteTestPollutantById" parameterType="Long">
+        delete from quote_test_pollutant where id = #{id}
+    </delete>
+
+    <delete id="deleteQuoteTestPollutantByIds" parameterType="String">
+        delete from quote_test_pollutant where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

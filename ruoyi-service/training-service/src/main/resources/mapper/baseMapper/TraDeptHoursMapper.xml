@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.training.mapper.TraDeptHoursMapper">
+
+    <resultMap id="TraDeptHoursResult" type="TraDeptHours">
+        <id property="id" column="id"/>
+        <result property="deptId" column="dept_id"/>
+        <result property="staffOldHours" column="staff_old_hours"/>
+        <result property="staffNewHours" column="staff_new_hours"/>
+        <result property="deptName" column="deptName"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="selectTraDeptHoursVo">
+        SELECT
+            t1.id,t1.dept_id,t1.staff_new_hours,t1.staff_old_hours,
+            s1.dept_name AS deptName
+        FROM
+            tra_hour_dept t1
+            LEFT JOIN sys_dept s1 ON t1.dept_id = s1.dept_id
+    </sql>
+
+
+    <select id="selectTraDeptHoursList" parameterType="TraDeptHours" resultMap="TraDeptHoursResult">
+        <include refid="selectTraDeptHoursVo"/>
+        <where>
+            <if test="deptId != null ">and t1.dept_id= #{deptId}</if>
+            <if test="companyId != null ">and FIND_IN_SET(#{companyId},s1.ancestors)</if>
+        </where>
+    </select>
+
+    <select id="selectTraDeptHoursById" parameterType="Long" resultMap="TraDeptHoursResult">
+        <include refid="selectTraDeptHoursVo"/>
+        where t1.id=#{id}
+    </select>
+
+    <select id="checkedDept" parameterType="String" resultMap="TraDeptHoursResult">
+        SELECT id,dept_id FROM tra_hour_dept  where dept_id=#{deptId}
+    </select>
+
+    <select id="selectMoreDeptHoursList" resultMap="TraDeptHoursResult">
+        SELECT
+            t1.id,t1.dept_id,t1.staff_new_hours,t1.staff_old_hours,
+            s1.dept_name AS deptName
+        FROM
+            tra_hour_dept t1
+        LEFT JOIN sys_dept s1 ON t1.dept_id = s1.dept_id
+        where t1.dept_id in
+        <foreach collection="ids" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <insert id="insertTraDeptHours" parameterType="TraDeptHours">
+        insert into tra_hour_dept
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="deptId != null">dept_id,</if>
+            <if test="staffOldHours != null">staff_old_hours,</if>
+            <if test="staffNewHours != null">staff_new_hours,</if>
+            <if test="createBy != null">create_by,</if>
+            create_time
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="deptId != null">#{deptId},</if>
+            <if test="staffOldHours != null">#{staffOldHours},</if>
+            <if test="staffNewHours != null">#{staffNewHours},</if>
+            <if test="createBy != null">#{createBy},</if>
+            sysdate()
+        </trim>
+    </insert>
+
+    <update id="updateTraDeptHours" parameterType="TraDeptHours">
+        update tra_hour_dept
+        <set>
+            <if test="staffOldHours != null">staff_old_hours = #{staffOldHours},</if>
+            <if test="staffNewHours != null">staff_new_hours = #{staffNewHours},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            update_time =sysdate()
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTraDeptHoursByIds" parameterType="Long">
+        delete from tra_hour_dept where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+</mapper>

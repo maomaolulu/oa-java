@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.quote.mapper.QuoteTestNatureMapper">
+    
+    <resultMap type="QuoteTestNature" id="QuoteTestNatureResult">
+        <result property="id"    column="id"    />
+        <result property="natureName"    column="nature_name"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="checked"    column="checked"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectQuoteTestNatureVo">
+        select id, nature_name, del_flag, checked, create_time, update_time from quote_test_nature
+    </sql>
+
+    <select id="selectQuoteTestNatureList" parameterType="QuoteTestNature" resultMap="QuoteTestNatureResult">
+        <include refid="selectQuoteTestNatureVo"/>
+        <where>  
+            <if test="natureName != null  and natureName != ''"> and nature_name like concat('%', #{natureName}, '%')</if>
+            <if test="checked != null "> and checked = #{checked}</if>
+        </where>
+    </select>
+    
+    <select id="selectQuoteTestNatureById" parameterType="Long" resultMap="QuoteTestNatureResult">
+        <include refid="selectQuoteTestNatureVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertQuoteTestNature" parameterType="QuoteTestNature"  useGeneratedKeys="true" keyProperty="id">
+        insert into quote_test_nature
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="natureName != null">nature_name,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="checked != null">checked,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="natureName != null">#{natureName},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="checked != null">#{checked},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateQuoteTestNature" parameterType="QuoteTestNature">
+        update quote_test_nature
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="natureName != null">nature_name = #{natureName},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="checked != null">checked = #{checked},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteQuoteTestNatureById" parameterType="Long">
+        delete from quote_test_nature where id = #{id}
+    </delete>
+
+    <delete id="deleteQuoteTestNatureByIds" parameterType="String">
+        delete from quote_test_nature where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

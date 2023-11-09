@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.quote.mapper.QuotePollutantTypeMapper">
+    
+    <resultMap type="QuotePollutantType" id="QuotePollutantTypeResult">
+        <result property="id"    column="id"    />
+        <result property="pollutantName"    column="pollutant_name"    />
+        <result property="projectId"    column="project_id"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectQuotePollutantTypeVo">
+        select id, pollutant_name, project_id, del_flag, create_time, update_time from quote_pollutant_type
+    </sql>
+
+    <select id="selectQuotePollutantTypeList" parameterType="QuotePollutantType" resultMap="QuotePollutantTypeResult">
+        <include refid="selectQuotePollutantTypeVo"/>
+        <where>  
+            <if test="pollutantName != null  and pollutantName != ''"> and pollutant_name = #{pollutantName}</if>
+            <if test="projectId != null "> and project_id = #{projectId}</if>
+        </where>
+    </select>
+
+    <select id="selectQuotePollutantTypeById" parameterType="java.lang.Long" resultMap="QuotePollutantTypeResult">
+        <include refid="selectQuotePollutantTypeVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertQuotePollutantType" parameterType="QuotePollutantType"  useGeneratedKeys="true" keyProperty="id">
+        insert into quote_pollutant_type
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pollutantName != null">pollutant_name,</if>
+            <if test="projectId != null">project_id,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="pollutantName != null">#{pollutantName},</if>
+            <if test="projectId != null">#{projectId},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateQuotePollutantType" parameterType="QuotePollutantType">
+        update quote_pollutant_type
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="pollutantName != null">pollutant_name = #{pollutantName},</if>
+            <if test="projectId != null">project_id = #{projectId},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteQuotePollutantTypeById" parameterType="Long">
+        delete from quote_pollutant_type where id = #{id}
+    </delete>
+
+    <delete id="deleteQuotePollutantTypeByIds" parameterType="String">
+        delete from quote_pollutant_type where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.training.mapper.TraCourseInfoMapper">
+
+    <resultMap id="TraCourseInfoVoResult" type="CourseInfoVO" extends="TraCourseInfoResult">
+        <result property="myCourse" column="my_course"/>
+        <result property="schedule" column="schedule"/>
+        <result property="courseType" column="course_type"/>
+        <result property="trainType" column="category_name"/>
+    </resultMap>
+
+    <select id="selectTraCourseInfoCustomList" parameterType="TraCourseInfoDTO" resultMap="TraCourseInfoVoResult">
+        select id,course_name,class_hour,train_id,train_type,
+        dept_id REGEXP #{ancestors} as course_type,
+        IFNULL(course_id, 0) as my_course,
+        last_modifier,update_time
+        from tra_course_info t1
+        left join
+        (select * from tra_course_user where user_id = #{userId} and train_year = #{trainYear}) t2
+        on t1.id = t2.course_id
+        <where>
+            <if test="courseName != null  and courseName != ''">and course_name like concat('%', #{courseName}, '%')
+            </if>
+            <if test="classHour != null ">and class_hour = #{classHour}</if>
+            <if test="trainId != null ">and train_id = #{trainId}</if>
+            <if test="trainType != null  and trainType != ''">and train_type = #{trainType}</if>
+            <if test="deptId != null ">and dept_id = #{deptId}</if>
+            <if test="issueFlag != null ">and issue_flag = #{issueFlag}</if>
+            <if test="courseType != null ">and course_type = #{courseType}</if>
+            <if test="lastModifier != null  and lastModifier != ''">and last_modifier = #{lastModifier}</if>
+        </where>
+    </select>
+
+    <select id="selectMyCourseList" parameterType="TraCourseInfoDto" resultMap="TraCourseInfoVoResult">
+        select *
+        from (select t1.id,
+                     t1.course_name,
+                     t1.train_id,
+                     t1.train_type,
+                     t1.class_hour,
+                     t2.user_id,
+                     t2.schedule,
+                     dept_id REGEXP #{ancestors} as course_type
+              from tra_course_info t1
+                       left join tra_course_user t2
+                                 on t1.id = t2.course_id and t2.user_id = #{userId} and t2.train_year = #{trainYear}
+              where t1.issue_flag = #{issueFlag}) t3
+        where t3.course_type = #{courseType}
+           or t3.user_id is not null
+    </select>
+
+    <select id="selectTraCourseInfoUserList" parameterType="TraCourseInfoDTO" resultMap="TraCourseInfoVoResult">
+        select t1.*, t2.category_name
+        from tra_course_info t1
+        left join tra_train_category t2 on t1.train_id = t2.id
+        <where>
+            <if test="courseName != null  and courseName != ''">and course_name like concat('%', #{courseName}, '%')
+            </if>
+            <if test="classHour != null ">and class_hour = #{classHour}</if>
+            <if test="trainIdList != null and trainIdList.size() > 0">
+                and train_id in
+                <foreach collection="trainIdList" item="item" index="index" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="deptId != null  and deptId != ''">and dept_id = #{deptId}</if>
+            <if test="companyId != null  and companyId != ''">and t1.company_id = #{companyId}</if>
+            <if test="issueFlag != null and market == null ">and issue_flag = #{issueFlag}</if>
+            <if test="market != null ">and issue_flag != #{issueFlag}</if>
+            <if test="md5 != null  and md5 != ''">and md5 = #{md5}</if>
+            <if test="recommend != null ">and recommend = #{recommend}</if>
+            <if test="lastModifier != null  and lastModifier != ''">
+                and last_modifier like concat('%', #{lastModifier},'%')
+            </if>
+        </where>
+        order by t1.update_time desc
+    </select>
+
+    <select id="selectMoreCourseInfoList" resultMap="TraCourseInfoVoResult">
+        select t1.*, t2.category_name
+        from tra_course_info t1
+        left join tra_train_category t2 on t1.train_id = t2.id
+        where t1.company_id in
+        <foreach collection="ids" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <if test="info.courseName != null  and info.courseName != ''">
+            and t1.course_name like concat('%',#{info.courseName}, '%')
+        </if>
+        <if test="info.trainIdList != null and info.trainIdList.size() > 0">
+            and t1.train_id in
+            <foreach collection="info.trainIdList" item="item" index="index" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="info.issueFlag != null and info.market == null ">and t1.issue_flag = #{info.issueFlag}</if>
+        <if test="info.market != null ">and t1.issue_flag != #{info.issueFlag}</if>
+        <if test="info.lastModifier != null  and info.lastModifier != ''">
+            and t1.last_modifier like concat('%',#{info.lastModifier},'%')
+        </if>
+        order by t1.update_time desc
+    </select>
+</mapper>

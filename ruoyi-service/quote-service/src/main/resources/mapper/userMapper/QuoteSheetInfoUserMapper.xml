@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.quote.mapper.QuoteSheetInfoMapper">
+
+    <select id="selectQuoteSheetInfoUserList" parameterType="QuoteSheetInfo" resultMap="QuoteSheetInfoResult">
+        <include refid="selectQuoteSheetInfoVo"/>
+        <where>
+            <if test="id != null and id != ''"> and id = #{id}</if>
+            <if test="customerId != null "> and customer_id = #{customerId}</if>
+            <if test="recordCode != null  and recordCode != ''"> and record_code like concat('%', #{recordCode}, '%')</if>
+            <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
+            <if test="customerName != null  and customerName != ''"> and customer_name like concat('%', #{customerName}, '%')</if>
+            <if test="companyName != null  and companyName != ''"> and company_name like concat('%', #{companyName}, '%')</if>
+            <if test="masterCategory != null  and masterCategory != ''"> and master_category = #{masterCategory}</if>
+            <if test="masterAbbreviation != null  and masterAbbreviation != ''"> and master_abbreviation = #{masterAbbreviation}</if>
+            <if test="totalPrice != null "> and total_price = #{totalPrice}</if>
+            <if test="expertEvaluation != null "> and expert_evaluation = #{expertEvaluation}</if>
+            <if test="discount != null "> and discount = #{discount}</if>
+            <if test="discountPrice != null "> and discount_price = #{discountPrice}</if>
+            <if test="excludeTaxesPrice != null "> and exclude_taxes_price = #{excludeTaxesPrice}</if>
+            <if test="taxes != null "> and taxes = #{taxes}</if>
+            <if test="salesman != null  and salesman != ''"> and salesman like concat('%', #{salesman}, '%')</if>
+            <if test="telephone != null  and telephone != ''"> and telephone = #{telephone}</if>
+            <if test="email != null  and email != ''"> and email = #{email}</if>
+            <if test="serviceName != null  and serviceName != ''"> and service_name like concat('%', #{serviceName}, '%')</if>
+            <if test="serviceTelephone != null  and serviceTelephone != ''"> and service_telephone = #{serviceTelephone}</if>
+            <if test="serviceEmail != null  and serviceEmail != ''"> and service_email = #{serviceEmail}</if>
+            <if test="quoteProject != null  and quoteProject != ''"> and quote_project = #{quoteProject}</if>
+            <if test="salesInfo != null  and salesInfo != ''"> and sales_info = #{salesInfo}</if>
+            <if test="urgentExpense != null "> and urgent_expense = #{urgentExpense}</if>
+        </where>
+    </select>
+
+</mapper>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.quote.mapper.QuotePollutantTypeMapper">
+
+    <select id="selectQuotePollutantTypeFilterList" parameterType="QuotePollutantTypeDTO"
+            resultMap="QuotePollutantTypeResult">
+        select distinct t2.* from quote_category_pollutant t1
+        left join quote_pollutant_type t2 on t1.pollutant_type_id = t2.id
+        <where>
+            <if test="masterCategoryId != null ">and t1.master_category_id = #{masterCategoryId}</if>
+            <if test="list != null and list.size() != 0">
+                and t2.id not in
+                <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="selectQuotePollutantType" parameterType="QuotePollutantType" resultMap="QuotePollutantTypeResult">
+        <include refid="selectQuotePollutantTypeVo"/>
+        <where>
+            <if test="pollutantName != null  and pollutantName != ''">and pollutant_name = #{pollutantName}</if>
+            <if test="projectId != null ">and project_id = #{projectId}</if>
+        </where>
+    </select>
+
+    <select id="selectPollutantTypeInTestItem" parameterType="java.util.List" resultMap="QuotePollutantTypeResult">
+        select * from quote_pollutant_type where id in
+        <foreach collection="list" item="id" index="index" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="selectQuotePollutantTypeListForEdit" parameterType="QuotePollutantType"
+            resultMap="QuotePollutantTypeResult">
+        <include refid="selectQuotePollutantTypeVo"/>
+        <where>
+            <if test="pollutantName != null  and pollutantName != ''">and pollutant_name = #{pollutantName}</if>
+            <if test="projectId != null ">and project_id = #{projectId}</if>
+            <if test="id != null ">and id != #{id}</if>
+        </where>
+    </select>
+</mapper>

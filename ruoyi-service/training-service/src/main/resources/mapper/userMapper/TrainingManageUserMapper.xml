@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.training.mapper.TrainingManageMapper">
+
+    <resultMap id="TrainingManageResult" type="TrainingManageVo">
+        <result property="username" column="user_name"></result>
+        <result property="realHours" column="real_hour"></result>
+        <result property="deptName" column="dept_name"></result>
+        <result property="createTime" column="create_time"></result>
+    </resultMap>
+
+    <select id="selectTrainingManageList" parameterType="TrainingManageDto" resultMap="TrainingManageResult">
+        select t3.user_name, t3.real_hour, t3.create_time, t4.dept_name
+        from (select user_name, create_time,real_hour, dept_id from sys_user t1
+        left join (select * from tra_hour_user where train_year = #{trainYear}) t2 on t1.user_id = t2.user_id
+        where status = 0 and del_flag = 0
+        and <![CDATA[create_time < #{createTime} ]]>
+        and dept_id in (select distinct dept_id
+        from sys_dept where FIND_IN_SET(#{deptId}, ancestors) > 0
+        <if test="companyId != null">or dept_id = #{deptId}</if>
+        )
+        <if test="username != null  and username != ''">and t1.user_name like concat('%', #{username}, '%')</if>
+        ) t3
+        left join sys_dept t4 on t3.dept_id = t4.dept_id
+    </select>
+
+
+    <select id="selectTraManageList" parameterType="TraManage" resultType="TraManage">
+        SELECT
+        u.user_id,
+        u.dept_id,
+        u.user_name,
+        IFNULL(IF ((YEAR(NOW())- YEAR ( u.create_time )=1 and MONTH( u.create_time )>9) || YEAR(NOW())- YEAR (
+        u.create_time )=0, hd.staff_new_hours, hd.staff_old_hours ),0) AS targetHours,
+        IF ((YEAR(NOW())- YEAR ( u.create_time )=1 and MONTH( u.create_time )>9) || YEAR(NOW())- YEAR ( u.create_time
+        )=0, date_add(u.create_time, interval 3 month), concat(YEAR(now()),'-12-31 23:59:59') ) AS deadline,
+        IFNULL(a.accomplishHours,0) AS accomplishHours,
+        d.dept_name
+        FROM
+        sys_user u
+        LEFT JOIN sys_dept d ON u.dept_id = d.dept_id
+        LEFT JOIN tra_hour_dept hd ON hd.dept_id=u.dept_id
+        LEFT JOIN sys_user_role r1 ON u.user_id=r1.user_id
+        LEFT JOIN sys_role r2 ON r1.role_id=r2.role_id
+        LEFT JOIN (
+        SELECT t1.user_id,SUM( t2.class_hour ) AS accomplishHours
+        FROM
+        tra_course_user t1
+        LEFT JOIN tra_course_info t2 ON t1.course_id = t2.id
+        WHERE t1.`status` = '2' AND YEAR ( t1.finish_time )= YEAR(NOW())
+        GROUP BY t1.user_id
+        ) a ON u.user_id=a.user_id
+        WHERE r2.role_key='training_user' AND u.`status`=0 AND find_in_set( #{companyId}, d.ancestors )
+        <if test="userId != null and userId != ''">and u.user_id = #{userId}</if>
+        <if test="deptId != null and deptId != ''">and u.dept_id = #{deptId}</if>
+        ORDER BY deadline
+
+    </select>
+
+    <select id="selectMoreTraManageList" parameterType="TraManage" resultType="TraManage">
+        SELECT
+        u.user_id,
+        u.dept_id,
+        u.user_name,
+        IFNULL(IF ((YEAR(NOW())- YEAR ( u.create_time )=1 and MONTH( u.create_time )>9) || YEAR(NOW())- YEAR (
+        u.create_time )=0, hd.staff_new_hours, hd.staff_old_hours ),0) AS targetHours,
+        IF ((YEAR(NOW())- YEAR ( u.create_time )=1 and MONTH( u.create_time )>9) || YEAR(NOW())- YEAR ( u.create_time
+        )=0, date_add(u.create_time, interval 3 month), concat(YEAR(now()),'-12-31 23:59:59') ) AS deadline,
+        IFNULL(a.accomplishHours,0) AS accomplishHours,
+        d.dept_name
+        FROM
+        sys_user u
+        LEFT JOIN sys_dept d ON u.dept_id = d.dept_id
+        LEFT JOIN tra_hour_dept hd ON hd.dept_id=u.dept_id
+        LEFT JOIN sys_user_role r1 ON u.user_id=r1.user_id
+        LEFT JOIN sys_role r2 ON r1.role_id=r2.role_id
+        LEFT JOIN (
+        SELECT t1.user_id,SUM( t2.class_hour ) AS accomplishHours
+        FROM
+        tra_course_user t1
+        LEFT JOIN tra_course_info t2 ON t1.course_id = t2.id
+        WHERE t1.`status` = '2' AND YEAR ( t1.finish_time )= YEAR(NOW())
+        GROUP BY t1.user_id
+        ) a ON u.user_id=a.user_id
+        WHERE r2.role_key='training_user' AND u.`status` = 0 and u.dept_id in
+        <foreach collection="deptIds" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <if test="userId != null and userId != ''">and u.user_id = #{userId}</if>
+        ORDER BY deadline
+    </select>
+
+    <select id="getRateByDeptId" resultType="java.util.Map">
+        SELECT
+            sd.dept_id AS deptId,t1.completeRate,t2.passRate
+        FROM
+            sys_dept sd
+        LEFT JOIN(
+            SELECT u.dept_id, CONCAT( ROUND( COUNT( IF(IFNULL(a.accomplishHours,0)>=IFNULL(IF ((YEAR(NOW())- YEAR ( u.create_time )=1 and MONTH( u.create_time )>9) || YEAR(NOW())- YEAR (
+                u.create_time )=0, hd.staff_new_hours, hd.staff_old_hours ),0),1,0) = 1 OR NULL ) / COUNT(*) * 100, 2 ), '%' ) AS completeRate
+            FROM sys_user u
+            LEFT JOIN sys_dept d ON u.dept_id = d.dept_id
+            LEFT JOIN tra_hour_dept hd ON hd.dept_id=u.dept_id
+            LEFT JOIN sys_user_role r1 ON u.user_id=r1.user_id
+            LEFT JOIN sys_role r2 ON r1.role_id=r2.role_id
+            LEFT JOIN (
+                SELECT t1.user_id,SUM( t2.class_hour) AS accomplishHours
+                FROM tra_course_user t1
+                LEFT JOIN tra_course_info t2 ON t1.course_id = t2.id
+                WHERE t1.`status` = '2' AND YEAR ( t1.finish_time )= YEAR(NOW())
+                GROUP BY t1.user_id
+            ) a ON u.user_id=a.user_id
+            WHERE r2.role_key='training_user' AND u.`status`=0 and u.dept_id = #{deptId}
+        ) t1 ON t1.dept_id=sd.dept_id
+        LEFT JOIN(
+            SELECT
+                su.dept_id ,
+                CONCAT( ROUND( COUNT( ce.STATUS = 2 OR NULL ) / COUNT(*) * 100, 2 ), '%' ) AS passRate
+            FROM
+                tra_course_exam ce
+            LEFT JOIN sys_user su ON ce.user_id = su.user_id
+            WHERE
+            su.dept_id = #{deptId}
+            AND ce.train_year IN ( YEAR ( NOW()), YEAR ( NOW())+ 1 )
+        ) t2 ON t2.dept_id=sd.dept_id
+        WHERE
+            sd.dept_id = #{deptId}
+    </select>
+
+    <select id="getRateByCompanyId" resultType="java.util.Map">
+        SELECT t0.companyId                     AS deptId,
+               IFNULL(t1.completeRate, "0.00%") AS completeRate,
+               IFNULL(t2.passRate, "0.00%")     AS passRate
+        FROM
+            ( SELECT #{companyId} AS companyId ) t0
+            LEFT JOIN (
+            SELECT #{companyId} AS companyId, CONCAT( ROUND( COUNT( IF(IFNULL(a.accomplishHours,0)>=IFNULL(IF ((YEAR(NOW())- YEAR ( u.create_time )=1 and MONTH( u.create_time )>9) || YEAR(NOW())- YEAR (
+                u.create_time )=0, hd.staff_new_hours, hd.staff_old_hours ),0),1,0) = 1 OR NULL ) / COUNT(*) * 100, 2 ), '%' ) AS completeRate
+            FROM sys_user u
+            LEFT JOIN sys_dept d ON u.dept_id = d.dept_id
+            LEFT JOIN tra_hour_dept hd ON hd.dept_id=u.dept_id
+            LEFT JOIN sys_user_role r1 ON u.user_id=r1.user_id
+            LEFT JOIN sys_role r2 ON r1.role_id=r2.role_id
+            LEFT JOIN (
+                SELECT t1.user_id,SUM( t2.class_hour) AS accomplishHours
+                FROM tra_course_user t1
+                LEFT JOIN tra_course_info t2 ON t1.course_id = t2.id
+                WHERE t1.`status` = '2' AND YEAR ( t1.finish_time )= YEAR(NOW())
+                GROUP BY t1.user_id
+            ) a ON u.user_id=a.user_id
+            WHERE r2.role_key='training_user' AND u.`status`=0 AND find_in_set( #{companyId}, d.ancestors )
+            ) t1 ON t0.companyId = t1.companyId
+            LEFT JOIN (
+            SELECT
+                 #{companyId} AS companyId,
+                CONCAT( ROUND( COUNT( ce.STATUS = 2 OR NULL ) / COUNT(*) * 100, 2 ), '%' ) AS passRate
+            FROM
+                tra_course_exam ce
+                LEFT JOIN sys_user su ON ce.user_id = su.user_id
+            WHERE
+                ce.train_year IN ( YEAR ( NOW()), YEAR ( NOW())+ 1 )
+            AND su.dept_id IN ( SELECT sd.dept_id FROM sys_dept sd WHERE find_in_set( #{companyId}, sd.ancestors ) AND sd.`status` = '0' )
+            ) t2 ON t0.companyId = t2.companyId
+    </select>
+
+    <select id="getDeptHours" resultType="java.util.Map">
+        SELECT
+            su.user_name as userName,
+            sd.dept_name AS deptName,
+            IFNULL( IF ( #{type} = 1, thd.staff_new_hours, thd.staff_old_hours ), 0 ) AS targetHours
+        FROM
+            sys_user su
+            LEFT JOIN sys_dept sd ON su.dept_id = sd.dept_id
+            LEFT JOIN tra_hour_dept thd ON sd.dept_id = thd.dept_id
+        WHERE
+            su.user_id = #{userId}
+    </select>
+
+
+    <resultMap id="companyInfo" type="java.util.HashMap">
+        <result column="companyId" property="key" javaType="java.lang.String"/>
+        <result column="companyName" property="value" javaType="java.lang.Object"/>
+    </resultMap>
+
+    <select id="getCompanyId" resultMap="companyInfo">
+        SELECT dept_id as companyId,dept_name as companyName
+        FROM sys_dept WHERE is_company = 1 AND dept_id IN
+        <foreach collection="ids" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+</mapper>

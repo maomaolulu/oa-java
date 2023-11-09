@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.BizClaimApplyMapper">
+
+    <resultMap type="BizClaimApply" id="BizClaimApplyResult">
+        <result property="id"    column="id"    />
+        <result property="title"    column="title"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="claimCode"    column="claim_code"    />
+        <result property="cc"    column="cc"    />
+        <result property="remark"    column="remark"    />
+        <result property="reason"    column="reason"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="applyer"    column="applyer"    />
+    </resultMap>
+
+
+
+    <insert id="insertBizClaimApply" parameterType="BizClaimApply" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_claim_apply
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="title != null  and title != ''">title,</if>
+            <if test="deptId != null ">dept_id,</if>
+            <if test="claimCode != null  and claimCode != ''">claim_code,</if>
+            <if test="cc != null  and cc != ''">cc,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="reason != null and reason != ''">reason,</if>
+            <if test="delFlag != null  and delFlag != ''">del_flag,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="applyer != null and applyer != ''">applyer,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="title != null  and title != ''">#{title},</if>
+            <if test="deptId != null ">#{deptId},</if>
+            <if test="claimCode != null  and claimCode != ''">#{claimCode},</if>
+            <if test="cc != null  and cc != ''">#{cc},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="reason != null and reason != ''">#{reason},</if>
+            <if test="delFlag != null  and delFlag != ''">#{delFlag},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="applyer != null and applyer != ''">#{applyer},</if>
+        </trim>
+    </insert>
+
+    <delete id="deleteClaimByIds" parameterType="Long">
+        delete from biz_claim_apply where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <update id="deleteLogic">
+        update biz_claim_apply set del_flag=true where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+</mapper>

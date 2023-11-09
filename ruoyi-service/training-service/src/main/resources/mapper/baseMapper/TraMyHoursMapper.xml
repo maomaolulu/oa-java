@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.training.mapper.TraMyHoursMapper">
+
+    <select id="getMyHours" parameterType="TraMyHours" resultType="TraMyHours">
+        SELECT
+            t1.user_id AS userId,
+            t1.dept_id AS deptId,
+            t1.user_name AS userName,
+            t1.avatar,
+            IFNULL( IF ( #{userType} = 1, t2.staff_new_hours, t2.staff_old_hours ), 0 ) AS targetHours,
+            IFNULL( t3.chosenHours, 0 ) AS chosenHours,
+	        IFNULL( t4.accomplishHours, 0 ) AS accomplishHours
+        FROM
+            sys_user t1
+            LEFT JOIN tra_hour_dept t2 ON t1.dept_id = t2.dept_id
+            LEFT JOIN (
+            SELECT
+                u.user_id,
+                SUM( i.class_hour ) AS chosenHours
+            FROM
+                tra_course_user u
+                LEFT JOIN tra_course_info i ON u.course_id = i.id
+            WHERE
+                u.user_id = #{userId}
+                AND u.train_year = #{year}
+            ) t3 ON t1.user_id = t3.user_id
+            LEFT JOIN (
+            SELECT
+                u1.user_id,
+                SUM( i2.class_hour ) AS accomplishHours
+            FROM
+                tra_course_user u1
+                LEFT JOIN tra_course_info i2 ON u1.course_id = i2.id
+            WHERE
+                u1.user_id = #{userId}
+                AND u1.`status` = '2'
+                AND YEAR ( u1.finish_time )= #{year}
+            ) t4 ON t1.user_id = t4.user_id
+        WHERE
+            t1.user_id = #{userId}
+    </select>
+
+</mapper>

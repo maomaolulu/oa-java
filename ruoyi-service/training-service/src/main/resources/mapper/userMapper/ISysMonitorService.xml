@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.training.mapper.TraCustomizeExamUserMapper">
+
+    <insert id="insertBatch" parameterType="TraCustomizeExamUser" >
+        insert into tra_customize_exam_user(exam_id, user_id) values
+        <foreach collection="list" separator="," item="item">
+            (#{item.examId},#{item.userId})
+        </foreach>
+    </insert>
+
+    <select id="selectUserIds" parameterType="java.lang.Long" resultType="java.lang.Long">
+        select user_id from tra_customize_exam_user where exam_id = #{examId}
+    </select>
+</mapper>

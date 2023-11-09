@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.quote.mapper.QuoteBaseFactorMapper">
+
+    <resultMap type="QuoteBaseFactorVO" id="QuoteBaseFactorResultVO" extends="QuoteBaseFactorResult">
+        <result property="category" column="category"/>
+        <result property="subcategory" column="subcategory"/>
+    </resultMap>
+
+    <resultMap type="QuoteBaseFactorVO" id="QuoteBaseFactorVOResult">
+        <result property="id" column="id"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="subcategoryId" column="subcategory_id"/>
+        <result property="factorName" column="factor_name"/>
+        <result property="standardInfo" column="standard_info"/>
+        <result property="limitRange" column="limit_range"/>
+        <result property="analysePrice" column="analyse_price"/>
+        <result property="samplePrice" column="sample_price"/>
+        <result property="price" column="price"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="factorType"    column="factor_type"    />
+    </resultMap>
+
+    <sql id="selectQuoteBaseFactorVO">
+        select t1.*, t2.category_name category, t3.category_name subcategory
+        from quote_base_factor t1
+                 left join quote_charge_category t2 on t1.category_id = t2.category_id
+                 left join quote_charge_category t3 on t1.subcategory_id = t3.category_id
+    </sql>
+
+    <sql id="selectWhere">
+        <where>
+            <if test="categoryId != null ">and t1.category_id = #{categoryId}</if>
+            <if test="category != null  and category != ''">and t2.category like concat('%', #{category}, '%')</if>
+            <if test="subcategoryId != null ">and t1.subcategory_id = #{subcategoryId}</if>
+            <if test="subcategory != null  and subcategory != ''">and t3.subcategory like concat('%', #{subcategory},
+                '%')
+            </if>
+            <if test="factorName != null  and factorName != ''">and t1.factor_name like concat('%', #{factorName},
+                '%')
+            </if>
+            <if test="standardInfo != null  and standardInfo != ''">and t1.standard_info = #{standardInfo}</if>
+            <if test="limitRange != null  and limitRange != ''">and t1.limit_range = #{limitRange}</if>
+            <if test="price != null ">and t1.price = #{price}</if>
+            <if test="factorType != null ">and t1.factor_type = #{factorType}</if>
+        </where>
+        order by t1.create_time desc,t1.id desc
+    </sql>
+
+    <sql id="addEditWhere">
+        <where>
+            <if test="categoryId != null ">and t1.category_id = #{categoryId}</if>
+            <if test="subcategoryId != null ">and t1.subcategory_id = #{subcategoryId}</if>
+            <if test="factorName != null  and factorName != ''">and t1.factor_name = #{factorName}</if>
+            <if test="standardInfo != null  and standardInfo != ''">and t1.standard_info = #{standardInfo}</if>
+            <if test="limitRange != null  and limitRange != ''">and t1.limit_range = #{limitRange}</if>
+            <if test="price != null ">and t1.price = #{price}</if>
+            <if test="factorType != null ">and t1.factor_type = #{factorType}</if>
+        </where>
+    </sql>
+
+    <sql id="filterWhere">
+        <where>
+            <if test="categoryId != null ">and t1.category_id = #{categoryId}</if>
+            <if test="category != null  and category != ''">and t2.category like concat('%', #{category}, '%')</if>
+            <if test="subcategoryId != null ">and t1.subcategory_id = #{subcategoryId}</if>
+            <if test="subcategory != null  and subcategory != ''">and t3.subcategory like concat('%', #{subcategory},
+                '%')
+            </if>
+            <if test="factorName != null  and factorName != ''">and t1.factor_name like concat('%', #{factorName}, '%')
+            </if>
+            <if test="standardInfo != null  and standardInfo != ''">and t1.standard_info = #{standardInfo}</if>
+            <if test="limitRange != null  and limitRange != ''">and t1.limit_range = #{limitRange}</if>
+            <if test="price != null ">and t1.price = #{price}</if>
+            <if test="list != null and list.size() != 0">
+                and t1.id not in
+                <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="factorType != null ">and t1.factor_type = #{factorType}</if>
+        </where>
+    </sql>
+
+    <select id="selectQuoteBaseFactorRelationList" parameterType="QuoteBaseFactorVO" resultMap="QuoteBaseFactorResult">
+        <include refid="selectQuoteBaseFactorVo"/>
+        <where>
+            <if test="categoryId != null ">and category_id = #{categoryId}</if>
+            <if test="subcategoryId != null ">and subcategory_id = #{subcategoryId}</if>
+            <if test="factorName != null  and factorName != ''">and factor_name like concat('%', #{factorName}, '%')
+            </if>
+            <if test="standardInfo != null  and standardInfo != ''">and standard_info = #{standardInfo}</if>
+            <if test="limitRange != null  and limitRange != ''">and limit_range = #{limitRange}</if>
+            <if test="price != null ">and price = #{price}</if>
+            <if test="analysePrice != null ">and analyse_price = #{analysePrice}</if>
+            <if test="samplePrice != null ">and sample_price = #{samplePrice}</if>
+            <if test="list != null and list.size() != 0">
+                and id not in
+                <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="factorType != null ">and factor_type = #{factorType}</if>
+        </where>
+    </select>
+
+    <select id="selectQuoteBaseFactorZwRelationList" parameterType="QuoteBaseFactorVO"
+            resultMap="QuoteBaseFactorVOResult">
+        <include refid="selectQuoteBaseFactorVo"/>
+        <where>
+            <if test="categoryId != null ">and category_id = #{categoryId}</if>
+            <if test="subcategoryId != null ">and subcategory_id = #{subcategoryId}</if>
+            <if test="factorName != null  and factorName != ''">and factor_name like concat('%', #{factorName}, '%')
+            </if>
+            <if test="standardInfo != null  and standardInfo != ''">and standard_info = #{standardInfo}</if>
+            <if test="limitRange != null  and limitRange != ''">and limit_range = #{limitRange}</if>
+            <if test="price != null ">and price = #{price}</if>
+            <if test="analysePrice != null ">and analyse_price = #{analysePrice}</if>
+            <if test="samplePrice != null ">and sample_price = #{samplePrice}</if>
+            <if test="list != null and list.size() != 0">
+                and id not in
+                <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="factorType != null ">and factor_type = #{factorType}</if>
+        </where>
+    </select>
+
+    <select id="selectQuoteBaseFactorUserList" parameterType="QuoteBaseFactorVO" resultMap="QuoteBaseFactorResultVO">
+        <include refid="selectQuoteBaseFactorVO"/>
+        <include refid="selectWhere"/>
+    </select>
+
+    <select id="selectQuoteBaseFactorExistsList" parameterType="QuoteBaseFactor" resultMap="QuoteBaseFactorResultVO">
+        <include refid="selectQuoteBaseFactorVO"/>
+        <include refid="addEditWhere"/>
+    </select>
+
+    <select id="selectQuoteBaseFactorFilterList" parameterType="QuoteBaseFactorVO" resultMap="QuoteBaseFactorResultVO">
+        <include refid="selectQuoteBaseFactorVO"/>
+        <include refid="filterWhere"/>
+    </select>
+
+    <insert id="insertQuoteBaseFactorBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        insert into
+        quote_base_factor(category_id,subcategory_id,factor_name,standard_info,limit_range,price,analyse_price,sample_price,create_time,factor_type)
+        values
+        <foreach collection="quoteBaseFactorList" item="quoteBaseFactor" separator=",">
+            (#{quoteBaseFactor.categoryId},#{quoteBaseFactor.subcategoryId},#{quoteBaseFactor.factorName},
+            #{quoteBaseFactor.standardInfo},#{quoteBaseFactor.limitRange}, #{quoteBaseFactor.price},
+            #{quoteBaseFactor.analysePrice}, #{quoteBaseFactor.samplePrice},#{quoteBaseFactor.createTime},
+            #{quoteBaseFactor.factorType})
+        </foreach>
+    </insert>
+
+    <select id="selectQuoteBaseFactor" parameterType="QuoteBaseFactorVO" resultMap="QuoteBaseFactorResultVO">
+        <include refid="selectQuoteBaseFactorVO"/>
+        <include refid="selectWhere"/>
+    </select>
+
+    <select id="selectRelationBaseFactorList" parameterType="Long" resultMap="QuoteBaseFactorResult">
+        select t2.id,
+               t2.factor_name,
+               t2.standard_info,
+               t2.limit_range,
+               t2.price,
+               t2.analyse_price,
+               t2.sample_price,
+               t2.factor_type
+        from quote_test_pollutant t1
+                 left join quote_base_factor t2 on t1.pollutant_id = t2.id
+        where t1.id = #{id}
+    </select>
+
+    <select id="selectPollutantTypeRelationFactorList" parameterType="QuoteBaseFactorVO"
+            resultMap="QuoteBaseFactorResult">
+        select t2.*
+        from quote_test_pollutant t1
+        left join quote_base_factor t2 on t1.pollutant_id = t2.id
+        <where>
+            <if test="id != null ">and t1.id = #{id}</if>
+            <if test="list != null and list.size() != 0">
+                and t1.pollutant_id not in
+                <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="selectQuoteBaseFactorImport" parameterType="QuoteBaseFactor" resultMap="QuoteBaseFactorResult">
+        <include refid="selectQuoteBaseFactorVo"/>
+        <where>
+            <if test="categoryId != null ">and category_id = #{categoryId}</if>
+            <if test="subcategoryId != null ">and subcategory_id = #{subcategoryId}</if>
+            <if test="factorName != null  and factorName != ''">and factor_name = #{factorName}</if>
+            <if test="standardInfo != null  and standardInfo != ''">and standard_info = #{standardInfo}</if>
+            <if test="limitRange != null  and limitRange != ''">and limit_range = #{limitRange}</if>
+            <if test="price != null ">and price = #{price}</if>
+            <if test="analysePrice != null ">and analyse_price = #{analysePrice}</if>
+            <if test="samplePrice != null ">and sample_price = #{samplePrice}</if>
+            <if test="factorType != null ">and factor_type = #{factorType}</if>
+        </where>
+    </select>
+
+    <select id="selectQuoteBaseFactorImportGwNew" parameterType="QuoteBaseFactor" resultMap="QuoteBaseFactorResult">
+        <include refid="selectQuoteBaseFactorVo"/>
+        <where>
+            <if test="categoryId != null ">and category_id = #{categoryId}</if>
+            <if test="subcategoryId != null ">and subcategory_id = #{subcategoryId}</if>
+            <if test="factorName != null  and factorName != ''">and factor_name = #{factorName}</if>
+            <if test="standardInfo != null  and standardInfo != ''">and standard_info = #{standardInfo}</if>
+            <if test="limitRange != null  and limitRange != ''">and limit_range = #{limitRange}</if>
+            <if test="price != null ">and price = #{price}</if>
+            <if test="analysePrice != null ">and analyse_price = #{analysePrice}</if>
+            <if test="samplePrice != null ">and sample_price = #{samplePrice}</if>
+            <if test="factorType != null ">and factor_type = #{factorType}</if>
+        </where>
+    </select>
+</mapper>

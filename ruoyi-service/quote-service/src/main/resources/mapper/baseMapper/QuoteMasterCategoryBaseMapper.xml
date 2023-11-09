@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.quote.mapper.QuoteMasterCategoryMapper">
+    
+    <resultMap type="QuoteMasterCategory" id="QuoteMasterCategoryResult">
+        <result property="id"    column="id"    />
+        <result property="categoryName"    column="category_name"    />
+        <result property="abbreviation"    column="abbreviation"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectQuoteMasterCategoryVo">
+        select id, category_name, abbreviation, del_flag, create_time, update_time from quote_master_category
+    </sql>
+
+    <select id="selectQuoteMasterCategoryList" parameterType="QuoteMasterCategory" resultMap="QuoteMasterCategoryResult">
+        <include refid="selectQuoteMasterCategoryVo"/>
+        <where>  
+            <if test="categoryName != null  and categoryName != ''"> and category_name like concat('%', #{categoryName}, '%')</if>
+            <if test="abbreviation != null  and abbreviation != ''"> and abbreviation = #{abbreviation}</if>
+        </where>
+    </select>
+    
+    <select id="selectQuoteMasterCategoryById" parameterType="Long" resultMap="QuoteMasterCategoryResult">
+        <include refid="selectQuoteMasterCategoryVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertQuoteMasterCategory" parameterType="QuoteMasterCategory"  useGeneratedKeys="true" keyProperty="id">
+        insert into quote_master_category
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="categoryName != null and categoryName != ''">category_name,</if>
+            <if test="abbreviation != null">abbreviation,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="categoryName != null and categoryName != ''">#{categoryName},</if>
+            <if test="abbreviation != null">#{abbreviation},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateQuoteMasterCategory" parameterType="QuoteMasterCategory">
+        update quote_master_category
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="categoryName != null and categoryName != ''">category_name = #{categoryName},</if>
+            <if test="abbreviation != null">abbreviation = #{abbreviation},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteQuoteMasterCategoryById" parameterType="Long">
+        delete from quote_master_category where id = #{id}
+    </delete>
+
+    <delete id="deleteQuoteMasterCategoryByIds" parameterType="String">
+        delete from quote_master_category where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

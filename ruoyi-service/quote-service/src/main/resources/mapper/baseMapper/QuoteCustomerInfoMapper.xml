@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.quote.mapper.QuoteCustomerInfoMapper">
+    
+    <resultMap type="QuoteCustomerInfo" id="QuoteCustomerInfoResult">
+        <result property="id"    column="id"    />
+        <result property="industry"    column="industry"    />
+        <result property="region"    column="region"    />
+        <result property="province"    column="province"    />
+        <result property="city"    column="city"    />
+        <result property="county"    column="county"    />
+        <result property="address"    column="address"    />
+        <result property="customerName"    column="customer_name"    />
+        <result property="telephone"    column="telephone"    />
+        <result property="email"    column="email"    />
+        <result property="fixedTelephone"    column="fixed_telephone"    />
+        <result property="salesmanId"    column="salesman_id"    />
+        <result property="salesman"    column="salesman"    />
+        <result property="companyName"    column="company_name"    />
+        <result property="personScale"    column="person_scale"    />
+        <result property="code"    column="code"    />
+        <result property="registerAddress"    column="register_address"    />
+        <result property="registerTime"    column="register_time"    />
+        <result property="representative"    column="representative"    />
+        <result property="businessScope"    column="business_scope"    />
+        <result property="remark"    column="remark"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectQuoteCustomerInfoVo">
+        select id, industry, region, province, city, county, address, customer_name, telephone, email, fixed_telephone, salesman_id, salesman, company_name, person_scale, code, register_address, register_time, representative, business_scope, remark, create_time, update_time from quote_customer_info
+    </sql>
+
+    <select id="selectQuoteCustomerInfoList" parameterType="QuoteCustomerInfo" resultMap="QuoteCustomerInfoResult">
+        <include refid="selectQuoteCustomerInfoVo"/>
+        <where>  
+            <if test="industry != null  and industry != ''"> and industry = #{industry}</if>
+            <if test="region != null  and region != ''"> and region = #{region}</if>
+            <if test="province != null  and province != ''"> and province = #{province}</if>
+            <if test="city != null  and city != ''"> and city = #{city}</if>
+            <if test="county != null  and county != ''"> and county = #{county}</if>
+            <if test="address != null  and address != ''"> and address = #{address}</if>
+            <if test="customerName != null  and customerName != ''"> and customer_name like concat('%', #{customerName}, '%')</if>
+            <if test="telephone != null  and telephone != ''"> and telephone = #{telephone}</if>
+            <if test="email != null  and email != ''"> and email = #{email}</if>
+            <if test="fixedTelephone != null  and fixedTelephone != ''"> and fixed_telephone = #{fixedTelephone}</if>
+            <if test="salesmanId != null "> and salesman_id = #{salesmanId}</if>
+            <if test="salesman != null  and salesman != ''"> and salesman = #{salesman}</if>
+            <if test="companyName != null  and companyName != ''"> and company_name like concat('%', #{companyName}, '%')</if>
+            <if test="personScale != null  and personScale != ''"> and person_scale = #{personScale}</if>
+            <if test="code != null  and code != ''"> and code = #{code}</if>
+            <if test="registerAddress != null  and registerAddress != ''"> and register_address = #{registerAddress}</if>
+            <if test="registerTime != null "> and register_time = #{registerTime}</if>
+            <if test="representative != null  and representative != ''"> and representative = #{representative}</if>
+            <if test="businessScope != null  and businessScope != ''"> and business_scope = #{businessScope}</if>
+        </where>
+    </select>
+    
+    <select id="selectQuoteCustomerInfoById" parameterType="Long" resultMap="QuoteCustomerInfoResult">
+        <include refid="selectQuoteCustomerInfoVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertQuoteCustomerInfo" parameterType="QuoteCustomerInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into quote_customer_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="industry != null">industry,</if>
+            <if test="region != null">region,</if>
+            <if test="province != null">province,</if>
+            <if test="city != null">city,</if>
+            <if test="county != null">county,</if>
+            <if test="address != null">address,</if>
+            <if test="customerName != null">customer_name,</if>
+            <if test="telephone != null">telephone,</if>
+            <if test="email != null">email,</if>
+            <if test="fixedTelephone != null">fixed_telephone,</if>
+            <if test="salesmanId != null">salesman_id,</if>
+            <if test="salesman != null">salesman,</if>
+            <if test="companyName != null">company_name,</if>
+            <if test="personScale != null">person_scale,</if>
+            <if test="code != null">code,</if>
+            <if test="registerAddress != null">register_address,</if>
+            <if test="registerTime != null">register_time,</if>
+            <if test="representative != null">representative,</if>
+            <if test="businessScope != null">business_scope,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="industry != null">#{industry},</if>
+            <if test="region != null">#{region},</if>
+            <if test="province != null">#{province},</if>
+            <if test="city != null">#{city},</if>
+            <if test="county != null">#{county},</if>
+            <if test="address != null">#{address},</if>
+            <if test="customerName != null">#{customerName},</if>
+            <if test="telephone != null">#{telephone},</if>
+            <if test="email != null">#{email},</if>
+            <if test="fixedTelephone != null">#{fixedTelephone},</if>
+            <if test="salesmanId != null">#{salesmanId},</if>
+            <if test="salesman != null">#{salesman},</if>
+            <if test="companyName != null">#{companyName},</if>
+            <if test="personScale != null">#{personScale},</if>
+            <if test="code != null">#{code},</if>
+            <if test="registerAddress != null">#{registerAddress},</if>
+            <if test="registerTime != null">#{registerTime},</if>
+            <if test="representative != null">#{representative},</if>
+            <if test="businessScope != null">#{businessScope},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateQuoteCustomerInfo" parameterType="QuoteCustomerInfo">
+        update quote_customer_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="industry != null">industry = #{industry},</if>
+            <if test="region != null">region = #{region},</if>
+            <if test="province != null">province = #{province},</if>
+            <if test="city != null">city = #{city},</if>
+            <if test="county != null">county = #{county},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="customerName != null">customer_name = #{customerName},</if>
+            <if test="telephone != null">telephone = #{telephone},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="fixedTelephone != null">fixed_telephone = #{fixedTelephone},</if>
+            <if test="salesmanId != null">salesman_id = #{salesmanId},</if>
+            <if test="salesman != null">salesman = #{salesman},</if>
+            <if test="companyName != null">company_name = #{companyName},</if>
+            <if test="personScale != null">person_scale = #{personScale},</if>
+            <if test="code != null">code = #{code},</if>
+            <if test="registerAddress != null">register_address = #{registerAddress},</if>
+            <if test="registerTime != null">register_time = #{registerTime},</if>
+            <if test="representative != null">representative = #{representative},</if>
+            <if test="businessScope != null">business_scope = #{businessScope},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteQuoteCustomerInfoById" parameterType="Long">
+        delete from quote_customer_info where id = #{id}
+    </delete>
+
+    <delete id="deleteQuoteCustomerInfoByIds" parameterType="String">
+        delete from quote_customer_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

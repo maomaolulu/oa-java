@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.training.mapper.TraCustomizeCourseExamMapper">
+    
+    <resultMap type="TraCustomizeCourseExam" id="TraCustomizeCourseExamResult">
+        <result property="examId"    column="exam_id"    />
+        <result property="courseId"    column="course_id"    />
+    </resultMap>
+
+    <sql id="selectTraCustomizeCourseExamVo">
+        select exam_id, course_id from tra_customize_course_exam
+    </sql>
+
+    <select id="selectTraCustomizeCourseExamList" parameterType="TraCustomizeCourseExam" resultMap="TraCustomizeCourseExamResult">
+        <include refid="selectTraCustomizeCourseExamVo"/>
+        <where>  
+        </where>
+    </select>
+    
+    <select id="selectTraCustomizeCourseExamByExamId" parameterType="Long" resultMap="TraCustomizeCourseExamResult">
+        <include refid="selectTraCustomizeCourseExamVo"/>
+        where exam_id = #{examId}
+    </select>
+        
+    <insert id="insertTraCustomizeCourseExam" parameterType="TraCustomizeCourseExam" >
+        insert into tra_customize_course_exam
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="examId != null">exam_id,</if>
+            <if test="courseId != null">course_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="examId != null">#{examId},</if>
+            <if test="courseId != null">#{courseId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTraCustomizeCourseExam" parameterType="TraCustomizeCourseExam">
+        update tra_customize_course_exam
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="courseId != null">course_id = #{courseId},</if>
+        </trim>
+        where exam_id = #{examId}
+    </update>
+
+    <delete id="deleteTraCustomizeCourseExamByExamId" parameterType="Long">
+        delete from tra_customize_course_exam where exam_id = #{examId}
+    </delete>
+
+    <delete id="deleteTraCustomizeCourseExamByExamIds" parameterType="String">
+        delete from tra_customize_course_exam where exam_id in 
+        <foreach item="examId" collection="array" open="(" separator="," close=")">
+            #{examId}
+        </foreach>
+    </delete>
+</mapper>

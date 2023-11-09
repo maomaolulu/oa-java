@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.quote.mapper.QuoteCustomerServiceMapper">
+
+    <resultMap type="QuoteCustomerService" id="QuoteCustomerServiceResult">
+        <result property="id" column="id"/>
+        <result property="companyId" column="company_id"/>
+        <result property="companyName" column="company_name"/>
+        <result property="departmentId" column="department_id"/>
+        <result property="department" column="department"/>
+        <result property="userId" column="user_id"/>
+        <result property="name" column="name"/>
+        <result property="telephone" column="telephone"/>
+        <result property="email" column="email"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="selectQuoteCustomerServiceVo">
+        select id,
+               company_id,
+               company_name,
+               department_id,
+               department,
+               user_id,
+               name,
+               telephone,
+               email,
+               create_time,
+               update_time
+        from quote_customer_service
+    </sql>
+
+    <select id="selectQuoteCustomerServiceList" parameterType="QuoteCustomerService"
+            resultMap="QuoteCustomerServiceResult">
+        <include refid="selectQuoteCustomerServiceVo"/>
+        <where>
+            <if test="companyId != null ">and company_id = #{companyId}</if>
+            <if test="companyName != null  and companyName != ''">and company_name like concat('%', #{companyName},
+                '%')
+            </if>
+            <if test="departmentId != null ">and department_id = #{departmentId}</if>
+            <if test="department != null  and department != ''">and department = #{department}</if>
+            <if test="userId != null ">and user_id = #{userId}</if>
+            <if test="name != null  and name != ''">and name like concat('%', #{name}, '%')</if>
+            <if test="telephone != null  and telephone != ''">and telephone = #{telephone}</if>
+            <if test="email != null  and email != ''">and email = #{email}</if>
+        </where>
+    </select>
+
+    <select id="selectQuoteCustomerServiceById" parameterType="Long" resultMap="QuoteCustomerServiceResult">
+        <include refid="selectQuoteCustomerServiceVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertQuoteCustomerService" parameterType="QuoteCustomerService" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into quote_customer_service
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="companyId != null">company_id,</if>
+            <if test="companyName != null">company_name,</if>
+            <if test="departmentId != null">department_id,</if>
+            <if test="department != null">department,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="name != null">name,</if>
+            <if test="telephone != null">telephone,</if>
+            <if test="email != null">email,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="companyId != null">#{companyId},</if>
+            <if test="companyName != null">#{companyName},</if>
+            <if test="departmentId != null">#{departmentId},</if>
+            <if test="department != null">#{department},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="name != null">#{name},</if>
+            <if test="telephone != null">#{telephone},</if>
+            <if test="email != null">#{email},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateQuoteCustomerService" parameterType="QuoteCustomerService">
+        update quote_customer_service
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="companyId != null">company_id = #{companyId},</if>
+            <if test="companyName != null">company_name = #{companyName},</if>
+            <if test="departmentId != null">department_id = #{departmentId},</if>
+            <if test="department != null">department = #{department},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="telephone != null">telephone = #{telephone},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteQuoteCustomerServiceById" parameterType="Long">
+        delete
+        from quote_customer_service
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteQuoteCustomerServiceByIds" parameterType="String">
+        delete from quote_customer_service where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

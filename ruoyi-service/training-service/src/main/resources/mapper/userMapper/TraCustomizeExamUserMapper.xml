@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.training.mapper.TraCustomizeExamMapper">
+
+    <resultMap type="TraCustomizeExamVO" id="TraCustomizeExamUserResult">
+        <result property="id"    column="id"    />
+        <result property="examName"    column="exam_name"    />
+        <result property="companyId"    column="company_id"    />
+        <result property="passScore"    column="pass_score"    />
+        <result property="singleNumber"    column="single_number"    />
+        <result property="singleScore"    column="single_score"    />
+        <result property="multiNumber"    column="multi_number"    />
+        <result property="multiScore"    column="multi_score"    />
+        <result property="judgeNumber"    column="judge_number"    />
+        <result property="judgeScore"    column="judge_score"    />
+        <result property="totalScore"    column="total_score"    />
+        <result property="issueFlag"    column="issue_flag"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="lastModifier"    column="last_modifier"    />
+    </resultMap>
+
+    <select id="selectTraCustomizeExamUserList" parameterType="TraCustomizeExamVO"
+            resultMap="TraCustomizeExamUserResult">
+        select distinct t1.* from tra_customize_exam t1
+        left join tra_customize_course_exam t2 on t1.id = t2.exam_id
+        left join tra_course_info t3 on t2.course_id = t3.id
+        <where>
+            <if test="examName != null  and examName != ''">and t1.exam_name like concat('%', #{examName}, '%')</if>
+            <if test="companyId != null ">and t1.company_id = #{companyId}</if>
+            <if test="courseName != null  and courseName != ''">and t3.course_name like concat('%',
+                #{courseName},'%')
+            </if>
+            <if test="lastModifier != null  and lastModifier != ''">and t1.last_modifier like
+                concat('%',#{lastModifier},'%')
+            </if>
+        </where>
+        order by t1.update_time desc
+    </select>
+
+    <select id="selectCourseNames" parameterType="java.lang.Long" resultType="java.lang.String">
+        select t2.course_name
+        from tra_customize_course_exam t1
+                 left join tra_course_info t2 on t1.course_id = t2.id
+        where t1.exam_id = #{examId}
+    </select>
+
+    <select id="selectCourseInfoForExam" parameterType="java.lang.Long" resultMap="com.ruoyi.training.mapper.TraCourseInfoMapper.TraCourseInfoResult">
+        select t2.*
+        from tra_customize_course_exam t1
+                 left join tra_course_info t2 on t1.course_id = t2.id
+        where t1.exam_id = #{examId}
+    </select>
+</mapper>

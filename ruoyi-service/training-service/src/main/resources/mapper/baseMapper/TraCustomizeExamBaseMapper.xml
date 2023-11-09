@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.training.mapper.TraCustomizeExamMapper">
+    
+    <resultMap type="TraCustomizeExam" id="TraCustomizeExamResult">
+        <result property="id"    column="id"    />
+        <result property="examName"    column="exam_name"    />
+        <result property="companyId"    column="company_id"    />
+        <result property="passScore"    column="pass_score"    />
+        <result property="singleNumber"    column="single_number"    />
+        <result property="singleScore"    column="single_score"    />
+        <result property="multiNumber"    column="multi_number"    />
+        <result property="multiScore"    column="multi_score"    />
+        <result property="judgeNumber"    column="judge_number"    />
+        <result property="judgeScore"    column="judge_score"    />
+        <result property="totalScore"    column="total_score"    />
+        <result property="issueFlag"    column="issue_flag"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="lastModifier"    column="last_modifier"    />
+    </resultMap>
+
+    <sql id="selectTraCustomizeExamVo">
+        select id, exam_name, company_id, pass_score, single_number, single_score, multi_number, multi_score, judge_number, judge_score, total_score, issue_flag, create_time, update_time, last_modifier from tra_customize_exam
+    </sql>
+
+    <select id="selectTraCustomizeExamList" parameterType="TraCustomizeExam" resultMap="TraCustomizeExamResult">
+        <include refid="selectTraCustomizeExamVo"/>
+        <where>  
+            <if test="examName != null  and examName != ''"> and exam_name like concat('%', #{examName}, '%')</if>
+            <if test="companyId != null "> and company_id = #{companyId}</if>
+            <if test="passScore != null "> and pass_score = #{passScore}</if>
+            <if test="singleNumber != null "> and single_number = #{singleNumber}</if>
+            <if test="singleScore != null "> and single_score = #{singleScore}</if>
+            <if test="multiNumber != null "> and multi_number = #{multiNumber}</if>
+            <if test="multiScore != null "> and multi_score = #{multiScore}</if>
+            <if test="judgeNumber != null "> and judge_number = #{judgeNumber}</if>
+            <if test="judgeScore != null "> and judge_score = #{judgeScore}</if>
+            <if test="totalScore != null "> and total_score = #{totalScore}</if>
+            <if test="issueFlag != null "> and issue_flag = #{issueFlag}</if>
+            <if test="lastModifier != null  and lastModifier != ''"> and last_modifier = #{lastModifier}</if>
+        </where>
+    </select>
+    
+    <select id="selectTraCustomizeExamById" parameterType="Long" resultMap="TraCustomizeExamResult">
+        <include refid="selectTraCustomizeExamVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTraCustomizeExam" parameterType="TraCustomizeExam"  useGeneratedKeys="true" keyProperty="id">
+        insert into tra_customize_exam
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="examName != null and examName != ''">exam_name,</if>
+            <if test="companyId != null">company_id,</if>
+            <if test="passScore != null">pass_score,</if>
+            <if test="singleNumber != null">single_number,</if>
+            <if test="singleScore != null">single_score,</if>
+            <if test="multiNumber != null">multi_number,</if>
+            <if test="multiScore != null">multi_score,</if>
+            <if test="judgeNumber != null">judge_number,</if>
+            <if test="judgeScore != null">judge_score,</if>
+            <if test="totalScore != null">total_score,</if>
+            <if test="issueFlag != null">issue_flag,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="lastModifier != null">last_modifier,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="examName != null and examName != ''">#{examName},</if>
+            <if test="companyId != null">#{companyId},</if>
+            <if test="passScore != null">#{passScore},</if>
+            <if test="singleNumber != null">#{singleNumber},</if>
+            <if test="singleScore != null">#{singleScore},</if>
+            <if test="multiNumber != null">#{multiNumber},</if>
+            <if test="multiScore != null">#{multiScore},</if>
+            <if test="judgeNumber != null">#{judgeNumber},</if>
+            <if test="judgeScore != null">#{judgeScore},</if>
+            <if test="totalScore != null">#{totalScore},</if>
+            <if test="issueFlag != null">#{issueFlag},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="lastModifier != null">#{lastModifier},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTraCustomizeExam" parameterType="TraCustomizeExam">
+        update tra_customize_exam
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="examName != null and examName != ''">exam_name = #{examName},</if>
+            <if test="companyId != null">company_id = #{companyId},</if>
+            <if test="passScore != null">pass_score = #{passScore},</if>
+            <if test="singleNumber != null">single_number = #{singleNumber},</if>
+            <if test="singleScore != null">single_score = #{singleScore},</if>
+            <if test="multiNumber != null">multi_number = #{multiNumber},</if>
+            <if test="multiScore != null">multi_score = #{multiScore},</if>
+            <if test="judgeNumber != null">judge_number = #{judgeNumber},</if>
+            <if test="judgeScore != null">judge_score = #{judgeScore},</if>
+            <if test="totalScore != null">total_score = #{totalScore},</if>
+            <if test="issueFlag != null">issue_flag = #{issueFlag},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="lastModifier != null">last_modifier = #{lastModifier},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTraCustomizeExamById" parameterType="Long">
+        delete from tra_customize_exam where id = #{id}
+    </delete>
+
+    <delete id="deleteTraCustomizeExamByIds" parameterType="String">
+        delete from tra_customize_exam where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

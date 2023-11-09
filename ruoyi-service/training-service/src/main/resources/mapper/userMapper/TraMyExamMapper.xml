@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.training.mapper.TraMyExamMapper">
+
+    <resultMap id="TraMyExamResult" type="TraMyExam">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="fulfilHour" column="fulfilHour"/>
+        <result property="trainYear" column="train_year"/>
+        <result property="trainId" column="train_id"/>
+        <result property="categoryName" column="categoryName"/>
+        <result property="status" column="status"/>
+        <result property="score" column="score"/>
+        <result property="checked" column="checked"/>
+        <result property="examType" column="exam_type"/>
+        <result property="examName" column="exam_name"/>
+        <result property="categoryList" column="categoryList"/>
+        <collection property="courseList" javaType="java.util.List" resultMap="CourseResult"/>
+    </resultMap>
+
+    <resultMap id="CourseResult" type="CourseUserVO">
+        <id property="courseId" column="course_id"/>
+        <result property="courseName" column="course_name"/>
+        <result property="courseHour" column="class_hour"/>
+    </resultMap>
+
+    <sql id="selectTraMyExamVo">
+        SELECT
+            tce.id,tce.user_id,tce.train_year,tce.`status`,tce.score,tce.exam_name,tce.exam_type,
+            tcel.course_id,tci.course_name,tci.class_hour
+        FROM
+            tra_course_exam tce
+            LEFT JOIN tra_course_exam_list tcel ON tce.id = tcel.exam_id
+            LEFT JOIN tra_course_user tcu ON tce.user_id=tcu.user_id AND tcel.course_id=tcu.course_id
+            LEFT JOIN tra_course_info tci ON tcel.course_id=tci.id
+        WHERE tcu.`status`=2
+    </sql>
+
+    <select id="selectMyExamList" parameterType="TraMyExam" resultMap="TraMyExamResult">
+        SELECT
+            tce.id,tce.user_id,tce.train_year,tce.`status`,tce.score,tce.exam_type,tce.exam_name,
+            t1.categoryList,t2.accomplishHours AS fulfilHour,
+            IF(IFNULL( t2.accomplishHours, 0 )>= IFNULL( t3.targetHours, 0 ), 1, 0 ) AS checked
+        FROM
+            tra_course_exam tce
+        LEFT JOIN(
+            SELECT
+                tce.id,GROUP_CONCAT( DISTINCT ttc.category_name,"@",ttc.css_class ) AS categoryList
+            FROM
+                tra_course_exam tce
+                LEFT JOIN tra_course_exam_list tcel ON tce.id = tcel.exam_id
+                LEFT JOIN tra_course_info tci ON tcel.course_id = tci.id
+                LEFT JOIN tra_train_category ttc ON tci.train_id = ttc.id
+                LEFT JOIN tra_course_user tcu ON tce.user_id = tcu.user_id AND tcel.course_id = tcu.course_id
+            WHERE tcu.`status` = 2
+            GROUP BY tce.id
+        )t1 ON tce.id=t1.id
+        LEFT JOIN(
+            SELECT
+                u1.user_id,
+                SUM( i2.class_hour ) AS accomplishHours
+            FROM
+                tra_course_user u1
+                LEFT JOIN tra_course_info i2 ON u1.course_id = i2.id
+            WHERE
+                u1.user_id = #{userId}  AND u1.`status` = '2'  AND YEAR ( u1.finish_time )= YEAR(NOW())
+        )t2 ON tce.user_id=t2.user_id
+        LEFT JOIN(
+            SELECT
+                u.user_id AS userId,
+                IFNULL(IF ((YEAR(NOW())- YEAR ( u.create_time )=1 and MONTH( u.create_time )>9) || YEAR(NOW())- YEAR ( u.create_time )=0, hd.staff_new_hours, hd.staff_old_hours ),0) AS targetHours
+            FROM
+                sys_user u
+                LEFT JOIN tra_hour_dept hd ON u.dept_id = hd.dept_id
+                WHERE u.user_id=#{userId}
+        )t3 ON tce.user_id=t3.userId
+        WHERE tce.user_id=#{userId} AND tce.train_year=YEAR(NOW()) AND tce.exam_type=#{examType}
+    </select>
+
+    <select id="selectMyExamByUserIdAndYearAndTrainId" parameterType="TraMyExam" resultMap="TraMyExamResult">
+        <include refid="selectTraMyExamVo"/>
+        <where>
+            <if test="userId != null ">and t1.user_id = #{userId}</if>
+            <if test="trainYear != null ">and t1.train_year = #{trainYear}</if>
+            <if test="trainId != null ">and t1.train_id = #{trainId}</if>
+        </where>
+    </select>
+
+    <select id="findExam" resultMap="TraMyExamResult">
+        SELECT id,user_id,train_year,`status`
+        FROM
+            tra_course_exam
+        WHERE
+            user_id = #{userId} AND train_year = #{nowYear} AND exam_type=0
+    </select>
+
+    <select id="selectMyExamCourseCount" parameterType="Long" resultType="Integer">
+        SELECT
+            COUNT(*)
+        FROM
+            tra_course_exam_list
+        WHERE
+            exam_id = #{examId}
+    </select>
+
+    <insert id="insertMyExam" parameterType="TraMyExam" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into tra_course_exam
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="trainYear != null">train_year,</if>
+            <if test="trainId != null">train_id,</if>
+            <if test="status != null">status,</if>
+            <if test="examType != null">exam_type,</if>
+            <if test="examName != null">exam_name,</if>
+            <if test="examId != null">exam_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="trainYear != null">#{trainYear},</if>
+            <if test="trainId != null">#{trainId},</if>
+            <if test="status != null">#{status},</if>
+            <if test="examType != null">#{examType},</if>
+            <if test="examName != null">#{examName},</if>
+            <if test="examId != null">#{examId},</if>
+        </trim>
+    </insert>
+
+    <update id="updateMyExamById" parameterType="TraMyExam">
+        update tra_course_exam
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="status != null">status = #{status},</if>
+            <if test="score != null">score = #{score},</if>
+            <if test="examType != null">exam_type = #{examType},</if>
+            <if test="examName != null and examName != ''">exam_name = #{examName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <insert id="addCourse">
+        insert into tra_course_exam_list
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="examId != null">exam_id,</if>
+            <if test="courseId != null">course_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="examId != null">#{examId},</if>
+            <if test="courseId != null">#{courseId},</if>
+        </trim>
+    </insert>
+
+    <delete id="deleteCourse">
+        delete from tra_course_exam_list where exam_id = #{examId} and course_id = #{courseId}
+    </delete>
+
+    <update id="updateMyExam" parameterType="TraMyExam">
+        update tra_course_exam
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="status != null">status = #{status},</if>
+            <if test="score != null">score = #{score},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteMyExam">
+        delete from tra_course_exam where user_id = #{userId} and train_year = #{nowYear} and train_id = #{trainId}
+    </delete>
+
+    <delete id="deleteMyExamById" parameterType="Long">
+        delete from tra_course_exam where id = #{examId}
+    </delete>
+
+    <select id="selectMyExamById" parameterType="Long" resultMap="TraMyExamResult">
+        <include refid="selectTraMyExamVo"/>
+        <if test="id != null ">and tce.id = #{id}</if>
+    </select>
+
+    <select id="selectMyExamListInfoByUserId" resultType="java.util.Map">
+        SELECT
+            t1.id AS examId,t1.exam_name AS examName, t1.`status` AS `status`, t2.examList
+        FROM
+            tra_course_exam t1
+            LEFT JOIN ( SELECT exam_id, GROUP_CONCAT( score ) AS examList FROM tra_score_record WHERE user_id =  #{userId} GROUP BY exam_id ) t2 ON t1.id = t2.exam_id
+        WHERE
+            t1.user_id = #{userId} AND t1.train_year = #{nowYear}
+    </select>
+
+</mapper>

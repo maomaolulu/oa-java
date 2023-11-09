@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.training.mapper.TraCourseExamMapper">
+    
+    <resultMap type="TraCourseExam" id="TraCourseExamResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="trainId"    column="train_id"    />
+        <result property="trainYear"    column="train_year"    />
+        <result property="status"    column="status"    />
+        <result property="score"    column="score"    />
+        <result property="examType"    column="exam_type"    />
+        <result property="examName"    column="exam_name"    />
+        <result property="examId"    column="exam_id"    />
+    </resultMap>
+
+    <sql id="selectTraCourseExamVo">
+        select id, user_id, train_id, train_year, status, score, exam_type, exam_name, exam_id from tra_course_exam
+    </sql>
+
+    <select id="selectTraCourseExamList" parameterType="TraCourseExam" resultMap="TraCourseExamResult">
+        <include refid="selectTraCourseExamVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="trainId != null "> and train_id = #{trainId}</if>
+            <if test="trainYear != null  and trainYear != ''"> and train_year = #{trainYear}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="score != null "> and score = #{score}</if>
+            <if test="examType != null "> and exam_type = #{examType}</if>
+            <if test="examName != null  and examName != ''"> and exam_name like concat('%', #{examName}, '%')</if>
+            <if test="examId != null "> and exam_id = #{examId}</if>
+        </where>
+    </select>
+    
+    <select id="selectTraCourseExamById" parameterType="Long" resultMap="TraCourseExamResult">
+        <include refid="selectTraCourseExamVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTraCourseExam" parameterType="TraCourseExam"  useGeneratedKeys="true" keyProperty="id">
+        insert into tra_course_exam
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="trainId != null">train_id,</if>
+            <if test="trainYear != null and trainYear != ''">train_year,</if>
+            <if test="status != null">status,</if>
+            <if test="score != null">score,</if>
+            <if test="examType != null">exam_type,</if>
+            <if test="examName != null">exam_name,</if>
+            <if test="examId != null">exam_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="trainId != null">#{trainId},</if>
+            <if test="trainYear != null and trainYear != ''">#{trainYear},</if>
+            <if test="status != null">#{status},</if>
+            <if test="score != null">#{score},</if>
+            <if test="examType != null">#{examType},</if>
+            <if test="examName != null">#{examName},</if>
+            <if test="examId != null">#{examId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTraCourseExam" parameterType="TraCourseExam">
+        update tra_course_exam
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="trainId != null">train_id = #{trainId},</if>
+            <if test="trainYear != null and trainYear != ''">train_year = #{trainYear},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="score != null">score = #{score},</if>
+            <if test="examType != null">exam_type = #{examType},</if>
+            <if test="examName != null">exam_name = #{examName},</if>
+            <if test="examId != null">exam_id = #{examId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTraCourseExamById" parameterType="Long">
+        delete from tra_course_exam where id = #{id}
+    </delete>
+
+    <delete id="deleteTraCourseExamByIds" parameterType="String">
+        delete from tra_course_exam where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

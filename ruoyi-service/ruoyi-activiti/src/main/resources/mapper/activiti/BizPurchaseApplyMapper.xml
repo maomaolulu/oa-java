@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.BizPurchaseApplyMapper">
+
+    <resultMap type="BizPurchaseApply" id="BizPurchaseApplyResult">
+        <result property="id"    column="id"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="acceptor"    column="acceptor"    />
+        <result property="isAcceptance"    column="is_acceptance"    />
+        <result property="purchaser"    column="purchaser"    />
+        <result property="isPurchase"    column="is_purchase"    />
+        <result property="cc"    column="cc"    />
+        <result property="remark"    column="remark"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="title"    column="title"    />
+
+    </resultMap>
+
+    <sql id="selectBizPurchaseApplyVo">
+        select title,id, acceptor, is_acceptance, purchaser, is_purchase, cc, remark, del_flag, create_by, create_time, update_by, update_time,dept_id,purchase_code
+        from biz_purchase_apply
+    </sql>
+
+    <select id="selectBizPurchaseApplyList" parameterType="BizPurchaseApply" resultMap="BizPurchaseApplyResult">
+        <include refid="selectBizPurchaseApplyVo"/>
+        <where>
+        </where>
+    </select>
+
+    <select id="selectBizPurchaseApplyById" parameterType="Long" resultMap="BizPurchaseApplyResult">
+        <include refid="selectBizPurchaseApplyVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertBizPurchaseApply" parameterType="BizPurchaseApply" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_purchase_apply
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="acceptor != null  and acceptor != ''">acceptor,</if>
+            <if test="isAcceptance != null  and isAcceptance != ''">is_acceptance,</if>
+            <if test="purchaser != null  and purchaser != ''">purchaser,</if>
+            <if test="isPurchase != null  and isPurchase != ''">is_purchase,</if>
+            <if test="cc != null  and cc != ''">cc,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="delFlag != null  and delFlag != ''">del_flag,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="purchaseCode != null ">purchase_code,</if>
+            <if test="deptId != null ">dept_id,</if>
+            <if test="title != null ">title,</if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="acceptor != null  and acceptor != ''">#{acceptor},</if>
+            <if test="isAcceptance != null  and isAcceptance != ''">#{isAcceptance},</if>
+            <if test="purchaser != null  and purchaser != ''">#{purchaser},</if>
+            <if test="isPurchase != null  and isPurchase != ''">#{isPurchase},</if>
+            <if test="cc != null  and cc != ''">#{cc},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="delFlag != null  and delFlag != ''">#{delFlag},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="purchaseCode != null ">#{purchaseCode},</if>
+            <if test="deptId != null ">#{deptId},</if>
+            <if test="title != null ">#{title},</if>
+        </trim>
+    </insert>
+
+    <update id="updateBizPurchaseApply" parameterType="BizPurchaseApply">
+        update biz_purchase_apply
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="acceptor != null  and acceptor != ''">acceptor = #{acceptor},</if>
+            <if test="isAcceptance != null  and isAcceptance != ''">is_acceptance = #{isAcceptance},</if>
+            <if test="purchaser != null  and purchaser != ''">purchaser = #{purchaser},</if>
+            <if test="isPurchase != null  and isPurchase != ''">is_purchase = #{isPurchase},</if>
+            <if test="cc != null  and cc != ''">cc = #{cc},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="delFlag != null  and delFlag != ''">del_flag = #{delFlag},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="title != null ">title = #{title},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizPurchaseApplyById" parameterType="Long">
+        delete from biz_purchase_apply where id = #{id}
+    </delete>
+
+    <delete id="deleteBizPurchaseApplyByIds" parameterType="String">
+        delete from biz_purchase_apply where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

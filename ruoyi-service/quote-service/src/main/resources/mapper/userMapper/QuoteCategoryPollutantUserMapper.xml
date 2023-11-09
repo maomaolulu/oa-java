@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.quote.mapper.QuoteCategoryPollutantMapper">
+
+    <resultMap id="QuoteCategoryPollutantTypeResult" type="QuoteTestTypeVO" extends="QuoteCategoryPollutantResult">
+        <result property="masterCategory" column="master_category"/>
+        <result property="subCategory" column="sub_category"/>
+        <result property="pollutantName" column="pollutant_name"/>
+    </resultMap>
+
+    <resultMap id="PollutantTypeResult" type="QuotePollutantTypeVO">
+        <result property="id" column="id"/>
+        <result property="natureName" column="nature_name"/>
+        <result property="natureIds" column="nature_ids"/>
+        <result property="industryName" column="industry_name"/>
+        <result property="pollutantName" column="pollutant_name"/>
+        <result property="creator" column="creator"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <resultMap type="QuotePollutantTestTypeVO" id="QuotePollutantTypeCheckedResult">
+        <result property="id"    column="id"    />
+        <result property="pollutantName"    column="pollutant_name"    />
+        <result property="projectId"    column="project_id"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <select id="selectPollutantTypeList" parameterType="QuotePollutantTypeVO" resultMap="PollutantTypeResult">
+        select t1.id, t1.nature_name, t1.nature_ids,t2.industry_name, t3.pollutant_name, t1.creator, t1.create_time
+        from quote_category_pollutant t1
+        left join quote_industry_info t2 on t1.master_category_id = t2.id
+        left join quote_pollutant_type t3 on t1.pollutant_type_id = t3.id
+        <where>
+            t1.project_id = 4
+            <if test="industryName != null  and industryName != ''">and t2.industry_name like concat('%',
+                #{industryName}, '%')
+            </if>
+            <if test="pollutantName != null  and pollutantName != ''">and t3.pollutant_name like concat('%',
+                #{pollutantName}, '%')
+            </if>
+        </where>
+        order by t1.create_time desc
+    </select>
+
+    <select id="selectTestTypeList" parameterType="QuoteIndustryInfoVO" resultMap="QuoteCategoryPollutantTypeResult">
+        select * from (
+        select t3.industry_name master_category, t4.industry_name sub_category, t5.pollutant_name, t2.* from
+        (select master_category_id,sub_category_id,pollutant_type_id from
+        (select * from quote_category_pollutant t where t.project_id = 2 ORDER BY t.create_time desc) t1
+        group by master_category_id,sub_category_id,pollutant_type_id) t2
+        left join quote_industry_info t3 on t2.master_category_id = t3.id
+        left join quote_industry_info t4 on t2.sub_category_id = t4.id
+        left join quote_pollutant_type t5 on t2.pollutant_type_id = t5.id ) t6
+        <where>
+            <if test="industryName != null  and industryName != ''">and t6.master_category like concat('%',
+                #{industryName},'%')
+            </if>
+            <if test="subName != null  and subName != ''">and t6.sub_category like concat('%',
+                #{subName},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectRelationPollutantType" parameterType="QuoteCategoryPollutant"
+            resultMap="com.ruoyi.quote.mapper.QuotePollutantTypeMapper.QuotePollutantTypeResult">
+        select distinct t2.id, t2.pollutant_name
+        from quote_category_pollutant t1
+                 left join quote_pollutant_type t2 on t1.pollutant_type_id = t2.id
+        where master_category_id = #{masterCategoryId}
+          and sub_category_id = #{subCategoryId}
+    </select>
+
+    <select id="selectRelationPollutant" parameterType="QuoteCategoryPollutant"
+            resultMap="com.ruoyi.quote.mapper.QuoteBaseFactorMapper.QuoteBaseFactorResult">
+        select t2.id, t2.factor_name, t2.price
+        from quote_category_pollutant t1
+        left join quote_base_factor t2
+        on t1.pollutant_id = t2.id
+        where t1.master_category_id = #{masterCategoryId}
+        and t1.sub_category_id = #{subCategoryId}
+        and t1.pollutant_type_id = #{pollutantTypeId}
+        <if test="list != null and list.size() != 0">
+            and t1.pollutant_id not in
+            <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="selectRelationPollutantId" parameterType="QuoteCategoryPollutant" resultType="java.lang.Long">
+        select t1.pollutant_id
+        from quote_category_pollutant t1
+                 left join quote_base_factor t2
+                           on t1.pollutant_id = t2.id
+        where t1.master_category_id = #{masterCategoryId}
+          and t1.sub_category_id = #{subCategoryId}
+          and t1.pollutant_type_id = #{pollutantTypeId}
+    </select>
+
+    <select id="selectRelationPollutantByTypes" parameterType="QuoteCategoryPollutant"
+            resultMap="com.ruoyi.quote.mapper.QuoteBaseFactorMapper.QuoteBaseFactorResult">
+        select t2.*
+        from quote_category_pollutant t1
+        left join quote_base_factor t2 on t1.pollutant_id = t2.id
+        <where>
+            <if test="masterCategoryId != null ">and master_category_id = #{masterCategoryId}</if>
+            <if test="subCategoryId != null ">and sub_category_id = #{subCategoryId}</if>
+            <if test="pollutantTypeId != null ">and pollutant_type_id = #{pollutantTypeId}</if>
+        </where>
+    </select>
+
+    <delete id="deleteRelationPollutant" parameterType="QuoteCategoryPollutant">
+        delete
+        from quote_category_pollutant
+        <where>
+            <if test="masterCategoryId != null ">and master_category_id = #{masterCategoryId}</if>
+            <if test="subCategoryId != null ">and sub_category_id = #{subCategoryId}</if>
+            <if test="pollutantTypeId != null ">and pollutant_type_id = #{pollutantTypeId}</if>
+            <if test="pollutantId != null ">and pollutant_id = #{pollutantId}</if>
+        </where>
+    </delete>
+
+    <delete id="deleteRelationPollutantByCategory" parameterType="QuoteCategoryPollutant">
+        delete
+        from quote_category_pollutant
+        <where>
+            <if test="masterCategoryId != null ">and master_category_id = #{masterCategoryId}</if>
+            <if test="subCategoryId != null ">and sub_category_id = #{subCategoryId}</if>
+        </where>
+    </delete>
+
+    <select id="selectRelationPollutantInfo" parameterType="QuoteCategoryPollutant"
+            resultMap="QuoteCategoryPollutantResult">
+        select * from quote_category_pollutant
+        <where>
+            <if test="masterCategoryId != null ">and master_category_id = #{masterCategoryId}</if>
+            <if test="subCategoryId != null ">and sub_category_id = #{subCategoryId}</if>
+            <if test="pollutantTypeId != null ">and pollutant_type_id = #{pollutantTypeId}</if>
+            <if test="pollutantId != null ">and pollutant_id = #{pollutantId}</if>
+            <if test="creator != null  and creator != ''">and creator = #{creator}</if>
+            <if test="projectId != null ">and project_id = #{projectId}</if>
+        </where>
+    </select>
+
+    <insert id="insertQuoteCategoryPollutantInfo" parameterType="QuoteCategoryPollutant" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into quote_category_pollutant
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="masterCategoryId != null">master_category_id,</if>
+            <if test="subCategoryId != null">sub_category_id,</if>
+            <if test="pollutantTypeId != null">pollutant_type_id,</if>
+            <if test="pollutantId != null">pollutant_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="creator != null">creator,</if>
+            <if test="projectId != null">project_id,</if>
+            <if test="natureIds != null and natureIds != ''">nature_ids,</if>
+            <if test="natureName != null and natureName != ''">nature_name,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="masterCategoryId != null">#{masterCategoryId},</if>
+            <if test="subCategoryId != null">#{subCategoryId},</if>
+            <if test="pollutantTypeId != null">#{pollutantTypeId},</if>
+            <if test="pollutantId != null">#{pollutantId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="creator != null">#{creator},</if>
+            <if test="projectId != null">#{projectId},</if>
+            <if test="natureIds != null and natureIds != ''">#{natureIds},</if>
+            <if test="natureName != null and natureName != ''">#{natureName},</if>
+        </trim>
+    </insert>
+
+    <select id="countByPollutantId" parameterType="Long" resultType="java.lang.Integer">
+        select count(*) from quote_category_pollutant where pollutant_id in
+        <foreach collection="array" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <delete id="deleteQuoteCategoryPollutantByPollutantIds" parameterType="String">
+        delete from quote_category_pollutant where pollutant_id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectQuoteCategoryPollutant" parameterType="QuoteCategoryPollutant"
+            resultMap="QuoteCategoryPollutantResult">
+        <include refid="selectQuoteCategoryPollutantVo"/>
+        <where>
+            <if test="masterCategoryId != null ">and master_category_id = #{masterCategoryId}</if>
+            <if test="subCategoryId != null ">and sub_category_id = #{subCategoryId}</if>
+            <if test="pollutantTypeId != null ">and pollutant_type_id = #{pollutantTypeId}</if>
+            <if test="pollutantId != null ">and pollutant_id = #{pollutantId}</if>
+            <if test="creator != null  and creator != ''">and creator = #{creator}</if>
+            <if test="projectId != null ">and project_id = #{projectId}</if>
+        </where>
+    </select>
+
+    <select id="selectRelationPollutantTypeGw" parameterType="QuoteCategoryPollutant"
+            resultMap="com.ruoyi.quote.mapper.QuotePollutantTypeMapper.QuotePollutantTypeResult">
+        select t2.*
+        from quote_category_pollutant t1
+                 left join quote_pollutant_type t2 on t1.pollutant_type_id = t2.id
+        where t1.master_category_id = #{masterCategoryId}
+          and FIND_IN_SET(#{natureIds}, t1.nature_ids)
+    </select>
+
+    <select id="selectRelationPollutantTypeCheckedGw" parameterType="QuoteCategoryPollutant"
+            resultMap="QuotePollutantTypeCheckedResult">
+        select t2.*
+        from quote_category_pollutant t1
+                 left join quote_pollutant_type t2 on t1.pollutant_type_id = t2.id
+        where t1.master_category_id = #{masterCategoryId}
+          and FIND_IN_SET(#{natureIds}, t1.nature_ids)
+    </select>
+</mapper>

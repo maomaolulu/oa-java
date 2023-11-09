@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.training.mapper.TraCertificateMapper">
+
+    <resultMap id="TraCertificateResult" type="TraCertificate">
+        <id property="id" column="id"/>
+        <result property="certificateName" column="certificate_name"/>
+        <result property="certificateType" column="certificate_type"/>
+        <result property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="examId" column="exam_id"/>
+        <result property="trainYear" column="train_year"/>
+        <result property="postCode" column="post_code"/>
+        <result property="deptId" column="dept_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="startDate" column="start_date"/>
+        <collection  property="courseList"   javaType="java.util.List"        resultMap="CourseResult" />
+    </resultMap>
+
+    <resultMap id="CourseResult" type="CourseUserVO">
+        <id     property="courseId"   column="course_id"     />
+        <result property="courseName" column="course_name"   />
+        <result property="courseHour" column="class_hour"   />
+    </resultMap>
+
+    <sql id="selectTraCertificateVo">
+        SELECT
+            tc.id,
+            tc.certificate_name,
+            tc.user_id,
+            tc.exam_id,
+            tc.train_year,
+            tc.post_code,
+            tc.dept_id,
+            tc.create_time,
+            su.user_name as userName
+        FROM
+            tra_certificate tc
+            LEFT JOIN sys_user su ON tc.user_id = su.user_id
+    </sql>
+
+    <select id="selectTraCertificateList" parameterType="TraCertificate" resultMap="TraCertificateResult">
+        <include refid="selectTraCertificateVo"/>
+        <where>
+            <if test="userId != null ">and tc.user_id= #{userId}</if>
+            <if test="trainYear != null ">and tc.train_year= #{trainYear}</if>
+        </where>
+    </select>
+
+    <select id="selectTraCertificateById" parameterType="String" resultMap="TraCertificateResult">
+        SELECT
+            tc.id,tc.certificate_name,tc.certificate_type,tc.user_id,tc.user_name,tc.exam_id,
+            tc.train_year,tc.post_code,tc.dept_id,tc.start_date,tc.create_time,
+            tcel.course_id,tci.course_name,tci.class_hour
+        FROM
+            tra_certificate tc
+            LEFT JOIN tra_course_exam_list tcel ON tc.exam_id = tcel.exam_id
+            LEFT JOIN tra_course_user tcu ON tc.user_id = tcu.user_id AND tcel.course_id = tcu.course_id
+            LEFT JOIN tra_course_info tci ON tcel.course_id = tci.id
+        WHERE
+            tc.id = #{id} AND tcu.`status` = 2 AND tc.create_time &gt; tcu.finish_time
+    </select>
+
+    <select id="selectCertificateNum" parameterType="String" resultType="Integer">
+        SELECT
+            COUNT(*)
+        FROM
+            tra_certificate
+        WHERE
+            post_code = #{postCode}
+    </select>
+
+
+    <insert id="insertCertificate" parameterType="TraCertificate">
+        insert into tra_certificate
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="certificateName != null">certificate_name,</if>
+            <if test="certificateType != null">certificate_type,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="userName != null">user_name,</if>
+            <if test="examId != null">exam_id,</if>
+            <if test="trainYear != null">train_year,</if>
+            <if test="postCode != null">post_code,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="startDate != null">start_date,</if>
+            create_time
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="certificateName != null">#{certificateName},</if>
+            <if test="certificateType != null">#{certificateType},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="userName != null">#{userName},</if>
+            <if test="examId != null">#{examId},</if>
+            <if test="trainYear != null">#{trainYear},</if>
+            <if test="postCode != null">#{postCode},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="startDate != null">#{startDate},</if>
+            sysdate()
+        </trim>
+    </insert>
+
+
+</mapper>

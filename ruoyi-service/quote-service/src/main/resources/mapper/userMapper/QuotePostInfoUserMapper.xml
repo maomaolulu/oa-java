@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.quote.mapper.QuotePostInfoMapper">
+
+    <resultMap type="QuotePostInfoVO" id="QuotePostInfoUserResult" extends="QuotePostInfoResult">
+        <result property="industryName" column="industry_name"/>
+    </resultMap>
+
+    <select id="selectQuotePostInfoByIds" parameterType="String" resultMap="QuotePostInfoResult">
+        select * from quote_post_info where industry_id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="selectQuotePostInfoByIndustryIdAndName" parameterType="QuotePostInfo" resultMap="QuotePostInfoResult">
+        <include refid="selectQuotePostInfoVo"/>
+        <where>
+            <if test="postName != null  and postName != ''">and post_name like concat('%', #{postName}, '%')</if>
+            <if test="industryId != null ">and industry_id = #{industryId}</if>
+            <if test="industryName != null  and industryName != ''">and industry_name like concat('%', #{industryName},
+                '%')
+            </if>
+            <if test="creator != null  and creator != ''">and creator = #{creator}</if>
+        </where>
+    </select>
+
+    <select id="selectQuotePostInfoUserList" parameterType="QuotePostInfo" resultMap="QuotePostInfoResult">
+        <include refid="selectQuotePostInfoVo"/>
+        <where>
+            <if test="postName != null  and postName != ''">and post_name not in ${postName}</if>
+            <if test="industryId != null ">and industry_id = #{industryId}</if>
+            <if test="industryName != null  and industryName != ''">and industry_name like concat('%', #{industryName},
+                '%')
+            </if>
+            <if test="creator != null  and creator != ''">and creator = #{creator}</if>
+        </where>
+    </select>
+
+    <select id="selectPostInfoUserList" parameterType="QuotePostInfoVO" resultMap="QuotePostInfoUserResult">
+        select t1.*, t2.industry_name
+        from quote_post_info t1
+        left join quote_industry_info t2 on t1.industry_id = t2.id
+        <where>
+            <if test="postName != null  and postName != ''">and t1.post_name like concat('%', #{postName}, '%')</if>
+            <if test="industryId != null ">and t1.industry_id = #{industryId}</if>
+            <if test="industryName != null  and industryName != ''">and t2.industry_name like concat('%',
+                #{industryName},
+                '%')
+            </if>
+            <if test="creator != null  and creator != ''">and t2.creator = #{creator}</if>
+        </where>
+        order by t1.create_time desc
+    </select>
+
+    <select id="selectPostInfoById" parameterType="java.lang.Long" resultMap="QuotePostInfoUserResult">
+        select t1.*, t2.industry_name
+        from quote_post_info t1
+                 left join quote_industry_info t2 on t1.industry_id = t2.id
+        where t1.id = #{id}
+    </select>
+</mapper>
